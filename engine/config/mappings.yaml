@@ -1,0 +1,49 @@
+# Proxy-Asset construction configuration (versioned, audited).
+#
+# The mapping engine is config-driven: rules, metric selection, and weighting
+# live here — not in code — so methodology changes are reviewable and every
+# produced proxy records the config version it was built with.
+version: "2026-07-08.1"
+
+construction:
+  # Metrics used as coordinates in the comparison space. Only those present on a
+  # given holding are used (all inputs are optional); absent ones are dropped.
+  metrics:
+    - revenue
+    - ebitda
+    - net_income
+    - ebitda_margin
+    - net_margin
+  # Size-like metrics span orders of magnitude -> log-scale before standardising.
+  log_scaled_metrics:
+    - revenue
+    - ebitda
+    - net_income
+    - market_value
+  standardize: zscore          # z-score each metric using the baseline universe
+  distance: euclidean          # standardised Euclidean distance
+  k_comparables: 8             # number of nearest traded assets in the basket
+  min_comparables: 3           # minimum for a valid proxy
+  weighting: inverse_distance  # inverse_distance | softmax
+  softmax_temperature: 1.0
+  filters:
+    same_sector: false         # restrict comparables to the holding's sector
+    same_region: false         # restrict comparables to the holding's region
+    relax_if_fewer_than: 5     # relax filters if too few comparables remain
+
+confidence:
+  high_metric_count: 4         # >= this many metrics used -> eligible for "high"
+  medium_metric_count: 2       # < this many metrics used -> "low"
+  near_distance: 1.5           # mean comparable distance <= this -> close fit
+  far_distance: 3.0            # mean comparable distance >= this -> poor fit
+
+scatter:
+  default_x: revenue
+  default_y: ebitda
+  available_axes:
+    - revenue
+    - ebitda
+    - net_income
+    - market_value
+    - ebitda_margin
+    - net_margin

@@ -1,0 +1,2 @@
+# Engine runtime dependencies (kept minimal for auditability).
+PyYAML>=6,<7

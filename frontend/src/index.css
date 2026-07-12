@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Proxima Nova is licensed; if unavailable the system fallback stack applies.
+   To enable it, add the Adobe Fonts (Typekit) <link> for family "proxima-nova". */
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-neutral text-ink font-sans antialiased;
+}
+
+/* Tabular numerals so financial columns align. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}

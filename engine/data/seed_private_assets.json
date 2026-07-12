@@ -1,0 +1,99 @@
+[
+  {
+    "name": "Project Helios",
+    "asset_class": "DIRECT_PRIVATE_EQUITY",
+    "currency": "USD",
+    "region": "US",
+    "sector": "Technology",
+    "revenue": 18000,
+    "ebitda": 5200,
+    "net_income": 2600,
+    "last_nav": 24000,
+    "strategy_type": "Growth"
+  },
+  {
+    "name": "Blue Delta Health Buyout",
+    "asset_class": "DIRECT_PRIVATE_EQUITY",
+    "currency": "USD",
+    "region": "US",
+    "sector": "Healthcare",
+    "revenue": 42000,
+    "ebitda": 15000,
+    "net_income": 8000,
+    "last_nav": 61000,
+    "strategy_type": "Buyout"
+  },
+  {
+    "name": "Meridian Consumer Growth Fund II",
+    "asset_class": "PRIVATE_EQUITY_FUND",
+    "currency": "USD",
+    "region": "Europe",
+    "sector": "Consumer Discretionary",
+    "revenue": 9000,
+    "ebitda": 2200,
+    "net_income": 1100,
+    "last_nav": 15000,
+    "strategy_type": "Buyout",
+    "vintage_year": 2021,
+    "commitment": 50000,
+    "paid_in": 30000,
+    "capital_call_line": 5000,
+    "capital_calls": [
+      { "date": "2022-03-01", "amount": 12000, "purpose": "Acquisition of PortCo Alpha" },
+      { "date": "2023-06-15", "amount": 18000, "purpose": "Follow-on investments & fund fees" }
+    ]
+  },
+  {
+    "name": "Northwind Private Credit Fund",
+    "asset_class": "DIRECT_PRIVATE_DEBT",
+    "currency": "EUR",
+    "region": "Europe",
+    "sector": "Financials",
+    "revenue": 3000,
+    "ebitda": 1200,
+    "net_income": 600,
+    "expected_yield": 0.078,
+    "seniority": "Senior Secured",
+    "credit_rating": "BB",
+    "last_nav": 9000,
+    "commitment": 15000,
+    "paid_in": 9000,
+    "capital_call_line": 2000,
+    "capital_calls": [
+      { "date": "2022-09-01", "amount": 4000, "purpose": "Initial loan originations" },
+      { "date": "2023-11-01", "amount": 5000, "purpose": "Additional originations & fees" }
+    ]
+  },
+  {
+    "name": "Summit Real Estate Partners Fund II",
+    "asset_class": "REAL_ESTATE_FUND",
+    "currency": "USD",
+    "region": "US",
+    "sector": "Financials",
+    "strategy_type": "Core-plus",
+    "revenue": 2500,
+    "ebitda": 1600,
+    "net_income": 400,
+    "last_nav": 12000,
+    "vintage_year": 2020,
+    "commitment": 25000,
+    "paid_in": 12000,
+    "capital_call_line": 3000,
+    "capital_calls": [
+      { "date": "2021-05-15", "amount": 7000, "purpose": "Acquisition of logistics portfolio" },
+      { "date": "2022-10-01", "amount": 5000, "purpose": "Value-add capex & follow-on" }
+    ]
+  },
+  {
+    "name": "Harborstone Core Real Estate",
+    "asset_class": "DIRECT_REAL_ESTATE",
+    "currency": "GBP",
+    "region": "GB",
+    "revenue": 800,
+    "ebitda": 520,
+    "net_income": 120,
+    "occupancy_rate": 0.93,
+    "property_type": "Office",
+    "last_nav": 8800
+  }
+]

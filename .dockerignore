@@ -1,0 +1,26 @@
+# Never bake reference-only material into the image (it is slated for deletion
+# and the solution must have zero runtime dependency on it).
+resource-temp/
+
+# VCS, CI, docs, scratch — not needed at runtime.
+.git/
+.github/
+.gitignore
+docs/
+*.md
+
+# Frontend: build it fresh inside the image; don't ship local artefacts.
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# Tests and Python caches — not needed in the runtime image.
+engine/tests/
+**/__pycache__/
+*.py[cod]
+
+# Local envs / secrets.
+.venv/
+venv/
+.env
+.env.*
