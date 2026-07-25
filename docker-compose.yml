@@ -1,20 +1,45 @@
-# Convenience wrapper around the published image — mirrors the documented
-# `docker run` (port 5530, restart policy). Use `docker compose up -d`.
+# Privé Proxy-Asset engine — deployment compose.
+#
+# Built on the server from source and tagged by the current git commit:
+#   IMAGE_TAG=$(git rev-parse --short HEAD) docker compose up -d --build
+# `docker compose up -d` alone uses :latest.
 services:
   prive-proxy-assets:
-    image: ghcr.io/alexAlesi-Prive/prive-proxy-assets:main
-    # To run the locally built image instead of the published one, comment out
-    # the `image:` line above and uncomment:
-    # build: .
+    build: .
+    image: psi/private-asset-proxy:${IMAGE_TAG:-latest}
     container_name: prive-proxy-assets
     restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
     ports:
       - "5530:5530"
     environment:
       PORT: "5530"
+      # User-added holdings live here; the volume below keeps them across rebuilds.
+      PRIVATE_ASSETS_FILE: /app/var/private_assets.json
+    volumes:
+      - psi-private-asset-proxy-data:/app/var
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:5530/healthz').status==200 else 1)"]
       interval: 30s
       timeout: 3s
       retries: 3
       start_period: 5s
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    labels:
+      com.prive.service: "prive-proxy-assets"
+    networks:
+      - psi-net
+
+volumes:
+  psi-private-asset-proxy-data:
+
+networks:
+  psi-net:
+    external: true
