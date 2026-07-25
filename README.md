@@ -26,7 +26,7 @@ engine/
   service/                   HTTP service: JSON API + serves the built SPA
   tests/                     Zero-dependency tests
 frontend/                    React + Vite + TS + Tailwind client UI (4 tabs, scatter plots)
-Dockerfile, docker-compose.yml, .github/workflows/  Deployment
+Dockerfile, docker-compose.yml, deploy.sh            Deployment (build on the server)
 ```
 
 The engine depends only on PyYAML; the proxy math is stdlib. It has **no
@@ -68,37 +68,35 @@ API: `GET /api/config`, `GET /api/baseline`, `GET/POST /api/private-assets`,
 `POST /api/proxy/preview`, `GET /healthz`. Env: `PORT` (5530), `HOST`,
 `WEB_DIR` (built SPA dir), `PRIVATE_ASSETS_FILE`.
 
-## Deploy (Docker via GHCR)
+## Deploy (Docker, built on the server)
 
-Images are published to GitHub Container Registry by
-[`.github/workflows/docker-publish.yml`](.github/workflows/docker-publish.yml).
-Pushing to `main` (or running the workflow manually) produces the `:main` tag.
+The image is **built on the server from source** and tagged by the current git
+commit — nothing is pulled from a container registry. `deploy.sh` wraps the
+whole cycle:
 
 ```bash
-docker pull ghcr.io/alexAlesi-Prive/prive-proxy-assets:main
+cp .env.example .env    # first time only; defaults work as-is
+./deploy.sh             # git pull, build, (re)start, show status
+```
 
-docker run -d --name prive-proxy-assets --restart unless-stopped -p 5530:5530 \
-  ghcr.io/alexAlesi-Prive/prive-proxy-assets:main
+Under the hood that is just Docker Compose:
+
+```bash
+IMAGE_TAG=$(git rev-parse --short HEAD) docker compose up -d --build
+docker compose ps        # expect: running (healthy)
 ```
 
 Then open **http://localhost:5530** — the container serves the full UI and the
 API on the same port. Health check: `curl http://localhost:5530/healthz`.
 
-Or with compose: `docker compose up -d`.
+User-added holdings persist on the `psi-private-asset-proxy-data` volume
+(mounted at `/app/var`), so they survive rebuilds. The compose file joins the
+shared external `psi-net` network; create it once per host with
+`docker network create psi-net` if it does not already exist.
 
-### Build & run the image locally
+### Build & run the image directly (no compose)
 
 ```bash
-docker build -t prive-proxy-assets:local .
-docker run -d --name prive-proxy-assets -p 5530:5530 prive-proxy-assets:local
+docker build -t psi/private-asset-proxy:local .
+docker run -d --name prive-proxy-assets -p 5530:5530 psi/private-asset-proxy:local
 ```
-
-### First-time GHCR notes
-- The workflow authenticates with the built-in `GITHUB_TOKEN` (needs
-  `packages: write`, already set in the workflow).
-- A newly published GHCR package is **private by default**. To `docker pull`
-  without authenticating, set the package visibility to **Public** in
-  GitHub → your profile → Packages → `prive-proxy-assets` → Package settings.
-  Otherwise run `docker login ghcr.io` with a token that has `read:packages`.
-- The package links to this repo automatically via the image's
-  `org.opencontainers.image.source` label.
