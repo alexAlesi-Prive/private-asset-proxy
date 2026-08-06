@@ -26,16 +26,15 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
-    mem_limit: 512m
+    mem_limit: 256m
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "5"
     labels:
-      com.prive.service: "prive-proxy-assets"
-    networks:
-      - psi-net
+      psi.owner: "alexAlesi-Prive team"
+      psi.repo: "https://github.com/alexAlesi-Prive/rm-dashboard"
 
 volumes:
   psi-private-asset-proxy-data:
