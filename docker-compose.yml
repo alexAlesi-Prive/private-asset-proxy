@@ -34,7 +34,10 @@ services:
         max-file: "5"
     labels:
       psi.owner: "alexAlesi-Prive team"
-      psi.repo: "https://github.com/alexAlesi-Prive/rm-dashboard"
+      psi.repo: "https://github.com/alexAlesi-Prive/private-asset-proxy"
+
+    # Shared network: other services reach this one at http://rm-dashboard:8080
+    networks: [psi-net]
 
 volumes:
   psi-private-asset-proxy-data:
