@@ -7,7 +7,7 @@ services:
   prive-proxy-assets:
     build: .
     image: psi/private-asset-proxy:${IMAGE_TAG:-latest}
-    container_name: prive-proxy-assets
+    container_name: psi-private-proxy-assets
     restart: unless-stopped
     env_file:
       - path: .env
