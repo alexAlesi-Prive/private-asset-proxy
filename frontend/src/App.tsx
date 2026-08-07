@@ -5,14 +5,16 @@ import { AddPrivateAsset } from './tabs/AddPrivateAsset'
 import { PrivateAssets } from './tabs/PrivateAssets'
 import { PortfolioScatter } from './tabs/PortfolioScatter'
 import { BaselineUniverse } from './tabs/BaselineUniverse'
+import { About } from './tabs/About'
 
-type Tab = 'assets' | 'add' | 'scatter' | 'baseline'
+type Tab = 'assets' | 'add' | 'scatter' | 'baseline' | 'about'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'assets', label: 'Private Assets' },
   { id: 'add', label: 'Add Private Asset' },
   { id: 'scatter', label: 'Portfolio Scatter' },
   { id: 'baseline', label: 'Baseline Universe' },
+  { id: 'about', label: 'About' },
 ]
 
 export default function App() {
@@ -69,12 +71,15 @@ export default function App() {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-6">
-        {error && (
+        {error && tab !== 'about' && (
           <div className="rounded-md border border-danger/30 bg-danger/5 text-danger text-sm px-4 py-3 mb-4">
             Could not reach the engine API: {error}
           </div>
         )}
-        {!config ? (
+        {/* About is static pitch content — always available, even before the engine responds. */}
+        {tab === 'about' ? (
+          <About />
+        ) : !config ? (
           <p className="text-sm text-tertiary py-16 text-center">Loading…</p>
         ) : tab === 'assets' ? (
           <PrivateAssets config={config} baseline={baseline} refreshKey={refreshKey} onAdd={startAdd} onEdit={startEdit} />
