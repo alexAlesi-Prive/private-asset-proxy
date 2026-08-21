@@ -1,4 +1,4 @@
-# Privé Proxy-Asset engine — deployment compose.
+# Privé Proxy-Asset engine - deployment compose.
 #
 # Built on the server from source and tagged by the current git commit:
 #   IMAGE_TAG=$(git rev-parse --short HEAD) docker compose up -d --build

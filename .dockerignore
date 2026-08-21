@@ -2,7 +2,7 @@
 # and the solution must have zero runtime dependency on it).
 resource-temp/
 
-# VCS, CI, docs, scratch — not needed at runtime.
+# VCS, CI, docs, scratch - not needed at runtime.
 .git/
 .github/
 .gitignore
@@ -14,7 +14,7 @@ node_modules/
 frontend/node_modules/
 frontend/dist/
 
-# Tests and Python caches — not needed in the runtime image.
+# Tests and Python caches - not needed in the runtime image.
 engine/tests/
 **/__pycache__/
 *.py[cod]

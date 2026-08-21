@@ -13,20 +13,20 @@ export function HoldingTooltip({ record }: { record: PrivateRecord }) {
     <div className="w-64 rounded-lg border border-border bg-white shadow-xl p-3">
       <div className="text-sm font-semibold text-primary leading-tight">{i.name}</div>
       <div className="text-[11px] text-tertiary mb-2">
-        {(i.asset_class ?? '—').replaceAll('_', ' ').toLowerCase()} · {i.currency ?? '—'}
+        {(i.asset_class ?? '-').replaceAll('_', ' ').toLowerCase()} · {i.currency ?? '-'}
       </div>
 
       <div className="space-y-1 text-xs">
-        <Row label="Last NAV" value={i.last_nav != null ? formatMetric('market_value', i.last_nav) : '—'} />
-        <Row label="Revenue" value={i.revenue != null ? formatMetric('revenue', i.revenue) : '—'} />
-        <Row label="EBITDA" value={i.ebitda != null ? formatMetric('ebitda', i.ebitda) : '—'} />
-        <Row label="Top comparable" value={s?.top_comparable ?? '—'} />
+        <Row label="Last NAV" value={i.last_nav != null ? formatMetric('market_value', i.last_nav) : '-'} />
+        <Row label="Revenue" value={i.revenue != null ? formatMetric('revenue', i.revenue) : '-'} />
+        <Row label="EBITDA" value={i.ebitda != null ? formatMetric('ebitda', i.ebitda) : '-'} />
+        <Row label="Top comparable" value={s?.top_comparable ?? '-'} />
         <Row label="Capital calls" value={hasCapitalCall ? 'Yes' : 'No'} highlight={hasCapitalCall} />
       </div>
 
       <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
         <span className="text-[11px] text-tertiary">
-          {s?.status === 'constructed' ? 'Proxy built' : s?.status === 'insufficient_data' ? 'Needs a metric' : s?.status ?? '—'}
+          {s?.status === 'constructed' ? 'Proxy built' : s?.status === 'insufficient_data' ? 'Needs a metric' : s?.status ?? '-'}
         </span>
         {s?.status === 'constructed' && <ConfidenceChip value={s?.confidence} />}
       </div>

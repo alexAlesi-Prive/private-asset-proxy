@@ -2,7 +2,7 @@
 
 This is the deterministic, config-driven core of Privé's method: place the
 holding in the shared metric space and build a weighted basket of the closest
-traded assets, with a full explanation for audit. Pure function — inject the
+traded assets, with a full explanation for audit. Pure function - inject the
 holding, the baseline universe, and the config.
 """
 from __future__ import annotations
@@ -194,10 +194,10 @@ def construct_proxy(
 def _weights(distances: list[float], cfg: dict[str, Any]) -> list[float]:
     """Distances → basket weights, with two stability guards.
 
-    * ``distance_floor`` — inverse-distance weighting degenerates when a
+    * ``distance_floor`` - inverse-distance weighting degenerates when a
       comparable sits at ~zero distance (it would take ~100% of the basket).
       Flooring the distance keeps the basket diversified.
-    * ``max_weight`` — hard cap on any single comparable, water-filled onto the
+    * ``max_weight`` - hard cap on any single comparable, water-filled onto the
       rest, so k≥3 names actually share the basket.
     """
     eps = 1e-9

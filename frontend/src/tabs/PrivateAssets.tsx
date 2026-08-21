@@ -86,10 +86,10 @@ export function PrivateAssets({
                     </td>
                     <td className="px-3 py-2 text-tertiary">{(r.input.asset_class ?? '').replaceAll('_', ' ').toLowerCase()}</td>
                     <td className="px-3 py-2 text-tertiary">{r.input.currency}</td>
-                    <td className="px-3 py-2 text-right tnum">{r.input.last_nav != null ? formatMetric('market_value', r.input.last_nav) : '—'}</td>
+                    <td className="px-3 py-2 text-right tnum">{r.input.last_nav != null ? formatMetric('market_value', r.input.last_nav) : '-'}</td>
                     <td className="px-3 py-2"><StatusChip status={s?.status} /></td>
-                    <td className="px-3 py-2">{s?.status === 'constructed' ? <ConfidenceChip value={s?.confidence} /> : <span className="text-tertiary">—</span>}</td>
-                    <td className="px-3 py-2 text-tertiary">{s?.top_comparable ?? '—'}</td>
+                    <td className="px-3 py-2">{s?.status === 'constructed' ? <ConfidenceChip value={s?.confidence} /> : <span className="text-tertiary">-</span>}</td>
+                    <td className="px-3 py-2 text-tertiary">{s?.top_comparable ?? '-'}</td>
                     <td className="px-3 py-2 text-right whitespace-nowrap">
                       <button onClick={(e) => edit(r, e)} className="text-secondary text-xs hover:underline">Edit</button>
                       <span className="text-border mx-2">|</span>

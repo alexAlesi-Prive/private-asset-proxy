@@ -130,7 +130,7 @@ class PrivateAssetStore:
     def _ensure_seeded(self) -> None:
         """Auto-load the default seed assets whenever the store is empty.
 
-        Empty means the file is missing OR contains no records (``[]``) — both
+        Empty means the file is missing OR contains no records (``[]``) - both
         happen in fresh containers and after a wipe, so the demo screens are
         always populated on startup. Existing user data is never overwritten.
         """

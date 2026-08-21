@@ -32,11 +32,11 @@ export function BaselineUniverse({ baseline }: { baseline: BaselineAsset[] }) {
     <div>
       {/* Heads-up: what the baseline universe actually is. */}
       <div className="rounded-lg border border-secondary/30 bg-secondary/[0.06] px-4 py-3 mb-4 text-sm text-ink">
-        <span className="font-semibold text-secondary">Heads-up — the baseline universe is client-specific.</span>{' '}
+        <span className="font-semibold text-secondary">Heads-up - the baseline universe is client-specific.</span>{' '}
         In production this is the <span className="font-medium">investible universe available to the client</span>: it
         matches whatever market-data subscription they hold, so the pool of eligible proxies changes from client to
         client. The list shown here is <span className="font-medium">illustrative prototype ("dummy") data</span> and is
-        not a fixed or recommended universe — each deployment is wired to the client's own EPC feed.
+        not a fixed or recommended universe - each deployment is wired to the client's own EPC feed.
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -44,7 +44,7 @@ export function BaselineUniverse({ baseline }: { baseline: BaselineAsset[] }) {
           <h2 className="text-lg font-semibold text-primary">Baseline traded universe</h2>
           <p className="text-sm text-tertiary">
             The pool of liquid comparables used to construct proxies.{' '}
-            <span className="font-medium">Prototype sample of {baseline.length} assets</span> — in production this is
+            <span className="font-medium">Prototype sample of {baseline.length} assets</span> - in production this is
             sourced from the EPC endpoint.
           </p>
         </div>

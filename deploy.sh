@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# deploy.sh — build on the server from source and (re)start the service.
+# deploy.sh - build on the server from source and (re)start the service.
 #
 # Standard PSI deployment: no registry pull. The image is built locally and
 # tagged by the current git commit, so `docker compose ps` / `docker images`

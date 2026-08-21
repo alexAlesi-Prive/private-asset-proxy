@@ -171,13 +171,13 @@ export function AddPrivateAsset({
           </Field>
           <Field label="Region">
             <select className={inputCls} value={form.region ?? ''} onChange={(e) => set('region', e.target.value)}>
-              <option value="">—</option>
+              <option value="">-</option>
               {REGIONS.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </Field>
           <Field label="Sector">
             <select className={inputCls} value={form.sector ?? ''} onChange={(e) => set('sector', e.target.value)}>
-              <option value="">—</option>
+              <option value="">-</option>
               {sectors.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </Field>
@@ -189,7 +189,7 @@ export function AddPrivateAsset({
           <Field label="EBITDA"><input type="number" className={inputCls} value={form.ebitda ?? ''} onChange={(e) => set('ebitda', e.target.value)} placeholder="e.g. 5200" /></Field>
           <Field label="Net income"><input type="number" className={inputCls} value={form.net_income ?? ''} onChange={(e) => set('net_income', e.target.value)} placeholder="e.g. 2600" /></Field>
           <Field label="Net debt"><input type="number" className={inputCls} value={form.net_debt ?? ''} onChange={(e) => set('net_debt', e.target.value)} placeholder="e.g. 30000 (net cash: negative)" /></Field>
-          <Field label="Leverage (net debt / EBITDA)"><input type="number" step="0.1" className={inputCls} value={form.leverage ?? ''} onChange={(e) => set('leverage', e.target.value)} placeholder="e.g. 5.0 — else derived from net debt" /></Field>
+          <Field label="Leverage (net debt / EBITDA)"><input type="number" step="0.1" className={inputCls} value={form.leverage ?? ''} onChange={(e) => set('leverage', e.target.value)} placeholder="e.g. 5.0 - else derived from net debt" /></Field>
           <Field label="Last NAV / market value"><input type="number" className={inputCls} value={form.last_nav ?? ''} onChange={(e) => set('last_nav', e.target.value)} placeholder="e.g. 90000" /></Field>
           <Field label="Expected yield (decimal)"><input type="number" step="0.001" className={inputCls} value={form.expected_yield ?? ''} onChange={(e) => set('expected_yield', e.target.value)} placeholder="e.g. 0.075" /></Field>
           <Field label="Occupancy rate (decimal)"><input type="number" step="0.01" className={inputCls} value={form.occupancy_rate ?? ''} onChange={(e) => set('occupancy_rate', e.target.value)} placeholder="e.g. 0.93" /></Field>
@@ -206,7 +206,7 @@ export function AddPrivateAsset({
 
         <Collapsible
           title="Capital call management"
-          subtitle="For commitment-based funds — commitment, paid-in, and the drawdown schedule"
+          subtitle="For commitment-based funds - commitment, paid-in, and the drawdown schedule"
           defaultOpen={capitalOpen}
         >
           <div className="grid grid-cols-2 gap-3">
@@ -316,7 +316,7 @@ export function AddPrivateAsset({
               </table>
             </div>
             <p className="text-[11px] text-tertiary mt-2">
-              Proposal only — review on the scatter, then Save. Config v{proxy.config_version}.
+              Proposal only - review on the scatter, then Save. Config v{proxy.config_version}.
             </p>
           </>
         )}

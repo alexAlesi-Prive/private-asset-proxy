@@ -4,16 +4,16 @@
 
 ---
 
-## 0. Discovery status — read first
+## 0. Discovery status - read first
 
 > **A live EPC endpoint could not be reached from this build environment.** There is no EPC URL configured here, the `EPC_ACCESS` credential (`prive4demo`) has no bound endpoint available to this session, and there is no public EPC API schema to introspect. Per the Phase-1 fallback ("if only a sample export is available, use that"), the contract below is **derived from the concrete private-holding shapes evidenced in the available sample material** and from the field set the engine's proxy logic actually consumes.
 >
-> **Every EPC-side claim in this document is therefore marked _sample-derived / unconfirmed against live EPC_.** The adapter (`engine/adapters/epc_adapter.py`) isolates these assumptions: when a real EPC endpoint or export is provided, **only the adapter's field-mapping table changes** — the engine's typed model and all downstream logic stay put. **This document should be confirmed against a live EPC export before client delivery** (see the open question at the end of Phase 1).
+> **Every EPC-side claim in this document is therefore marked _sample-derived / unconfirmed against live EPC_.** The adapter (`engine/adapters/epc_adapter.py`) isolates these assumptions: when a real EPC endpoint or export is provided, **only the adapter's field-mapping table changes** - the engine's typed model and all downstream logic stay put. **This document should be confirmed against a live EPC export before client delivery** (see the open question at the end of Phase 1).
 
 Confidence legend used below:
-- **Evidenced** — the field is present in sample holding records and/or is a field the proxy engine already consumes.
-- **Inferred** — the methodology needs it and it is standard for such a holdings feed, but it was not directly observed; confirm with EPC.
-- **Unknown** — not observed; may or may not exist in EPC.
+- **Evidenced** - the field is present in sample holding records and/or is a field the proxy engine already consumes.
+- **Inferred** - the methodology needs it and it is standard for such a holdings feed, but it was not directly observed; confirm with EPC.
+- **Unknown** - not observed; may or may not exist in EPC.
 
 ---
 
@@ -21,7 +21,7 @@ Confidence legend used below:
 
 EPC is treated as a **read-only holdings source**. The engine ingests a set of **holding records**; the private/illiquid subset (those keyed as *internal* rather than exchange-traded/cash) is what the proxy engine acts on.
 
-- A **holding record** carries identity, classification, reporting currency, valuation (last NAV + date), and — for private holdings — a set of **fundamentals** appropriate to its asset class.
+- A **holding record** carries identity, classification, reporting currency, valuation (last NAV + date), and - for private holdings - a set of **fundamentals** appropriate to its asset class.
 - Liquid holdings (exchange-traded, identified by ISIN/OCC, or cash) pass through untouched; they are already analytics-ready and are also the **universe of candidate proxies**.
 - The engine never writes back to EPC.
 
@@ -67,7 +67,7 @@ These are the exact inputs the proxy logic consumes, by class:
 | `maturity` | date or tenor (years) | Direct PD | Evidenced |
 | `seniority` | string (e.g. Senior/Subordinated) | Direct PD | Evidenced |
 | `credit_rating` | string (e.g. BBB) | Direct PD | Evidenced |
-| `occupancy_rate` | number (decimal 0–1) | Direct RE | Evidenced |
+| `occupancy_rate` | number (decimal 0-1) | Direct RE | Evidenced |
 | `property_type` | string | Direct RE | Evidenced |
 | `strategy_type` | string | PE Fund, PD Fund, RE Fund, Hedge Fund | Evidenced |
 
@@ -92,14 +92,14 @@ Mirrors the methodology's supported classes. **Mandatory** inputs must be presen
 | `DIRECT_PRIVATE_EQUITY` | region, sector | industry_group, revenue, ebitda, net_income, currency |
 | `DIRECT_PRIVATE_DEBT` | region, sector | industry_group, expected_yield, maturity, seniority, credit_rating, currency |
 | `DIRECT_REAL_ESTATE` | region | revenue, ebitda, net_income, occupancy_rate, property_type, currency |
-| `PRIVATE_EQUITY_FUND` | region, sector, strategy_type | — |
-| `PRIVATE_DEBT_FUND` | region, sector, strategy_type | — |
-| `REAL_ESTATE_FUND` | region, strategy_type | — |
-| `HEDGE_FUND` | strategy_type | — |
+| `PRIVATE_EQUITY_FUND` | region, sector, strategy_type | - |
+| `PRIVATE_DEBT_FUND` | region, sector, strategy_type | - |
+| `REAL_ESTATE_FUND` | region, strategy_type | - |
+| `HEDGE_FUND` | strategy_type | - |
 
 ---
 
-## 4. Gap analysis — methodology need vs EPC availability
+## 4. Gap analysis - methodology need vs EPC availability
 
 For each input the Phase-0 methodology needs, the availability against EPC (**sample-derived, unconfirmed**) is marked `available` / `partial` / `missing`. This bounds how good the proxy can be.
 
@@ -110,15 +110,15 @@ For each input the Phase-0 methodology needs, the availability against EPC (**sa
 | Sector | Tier-1 comparable filter | **available** (direct/funds) | Broader, less precise match |
 | Reporting currency | FX representation, anchoring | **available** | FX exposure mis-stated |
 | Industry group | Tier-1 sharpening (PE/PD) | **available** | Slightly coarser comparable |
-| Revenue / EBITDA / Net income | Tier-1 comparable scoring (PE/RE) | **partial** — schema exists, values often sparse | Drops to class/region match; lower confidence |
-| Expected yield / Maturity / Seniority / Credit rating | Tier-1 comparable scoring (PD) | **partial** — schema exists, values often sparse | Coarser credit proxy |
+| Revenue / EBITDA / Net income | Tier-1 comparable scoring (PE/RE) | **partial** - schema exists, values often sparse | Drops to class/region match; lower confidence |
+| Expected yield / Maturity / Seniority / Credit rating | Tier-1 comparable scoring (PD) | **partial** - schema exists, values often sparse | Coarser credit proxy |
 | Occupancy / Property type | Tier-1 sharpening (RE) | **partial** | Coarser RE proxy |
-| Strategy type | Required for all fund/HF classes | **partial** — mandatory but not always populated | Fund/HF holdings rejected to manual if blank |
-| Last NAV + date | Anchoring, roll-forward, **validation** | **partial** — value present at position level; explicit date **inferred** | No validation backtest; roll-forward disabled |
+| Strategy type | Required for all fund/HF classes | **partial** - mandatory but not always populated | Fund/HF holdings rejected to manual if blank |
+| Last NAV + date | Anchoring, roll-forward, **validation** | **partial** - value present at position level; explicit date **inferred** | No validation backtest; roll-forward disabled |
 | Leverage | Risk scaling | **partial** | Risk under/over-stated for levered holdings |
 | Vintage / commitment / NAV history | Roll-forward & validation quality | **missing** (unconfirmed) | Validation limited to point checks |
 
-**Headline read:** classification fields (class, region, sector, currency) look **reliably available**, so *every* in-scope holding can get at least a Tier-3 class-basket proxy. The **fundamentals and NAV-history** fields are the swing factor — where they are populated, Tier-1/Tier-2 high-confidence proxies are achievable; where they are sparse, the engine degrades gracefully to lower-confidence class proxies and flags it. **Confirming NAV-with-date and fundamental coverage in live EPC is the single highest-value discovery step** and directly determines the validation report (Phase 3).
+**Headline read:** classification fields (class, region, sector, currency) look **reliably available**, so *every* in-scope holding can get at least a Tier-3 class-basket proxy. The **fundamentals and NAV-history** fields are the swing factor - where they are populated, Tier-1/Tier-2 high-confidence proxies are achievable; where they are sparse, the engine degrades gracefully to lower-confidence class proxies and flags it. **Confirming NAV-with-date and fundamental coverage in live EPC is the single highest-value discovery step** and directly determines the validation report (Phase 3).
 
 ---
 
