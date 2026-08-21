@@ -1,4 +1,4 @@
-# Privé Proxy-Asset engine — container image (multi-stage).
+# Privé Proxy-Asset engine - container image (multi-stage).
 #
 # Stage 1 builds the React/Vite SPA. Stage 2 is a small Python runtime that
 # serves both the built SPA and the JSON API from one process on port 5530.
@@ -28,7 +28,7 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Engine package (build context excludes resource-temp/, docs/, tests via
-# .dockerignore — nothing reference-only is baked in).
+# .dockerignore - nothing reference-only is baked in).
 COPY engine/ ./engine/
 
 # Built SPA from stage 1.

@@ -1,4 +1,4 @@
-/** Privé external design system — palette mirrored from assets/theme.css. */
+/** Privé external design system - palette mirrored from assets/theme.css. */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
