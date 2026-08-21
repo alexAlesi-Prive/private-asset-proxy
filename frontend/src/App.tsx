@@ -5,15 +5,17 @@ import { AddPrivateAsset } from './tabs/AddPrivateAsset'
 import { PrivateAssets } from './tabs/PrivateAssets'
 import { PortfolioScatter } from './tabs/PortfolioScatter'
 import { BaselineUniverse } from './tabs/BaselineUniverse'
+import { Backtest } from './tabs/Backtest'
 import { About } from './tabs/About'
 
-type Tab = 'assets' | 'add' | 'scatter' | 'baseline' | 'about'
+type Tab = 'assets' | 'add' | 'scatter' | 'baseline' | 'backtest' | 'about'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'assets', label: 'Private Assets' },
   { id: 'add', label: 'Add Private Asset' },
   { id: 'scatter', label: 'Portfolio Scatter' },
   { id: 'baseline', label: 'Baseline Universe' },
+  { id: 'backtest', label: 'Backtest' },
   { id: 'about', label: 'About' },
 ]
 
@@ -87,6 +89,8 @@ export default function App() {
           <AddPrivateAsset key={editRecord?.id ?? 'new'} config={config} baseline={baseline} onSaved={onSaved} editRecord={editRecord} />
         ) : tab === 'scatter' ? (
           <PortfolioScatter config={config} baseline={baseline} />
+        ) : tab === 'backtest' ? (
+          <Backtest />
         ) : (
           <BaselineUniverse baseline={baseline} />
         )}

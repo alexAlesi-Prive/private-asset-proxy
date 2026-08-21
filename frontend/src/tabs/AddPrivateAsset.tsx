@@ -4,6 +4,7 @@ import {
 } from '../api'
 import { Button } from '../components/Button'
 import { CapitalCallCard } from '../components/CapitalCallCard'
+import { CapitalStructureCard } from '../components/CapitalStructureCard'
 import { Collapsible } from '../components/Collapsible'
 import { ConfidenceChip } from '../components/Chip'
 import { ScatterPanel } from '../components/ScatterPanel'
@@ -11,7 +12,7 @@ import type { ScatterSeries } from '../components/Scatter'
 
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'CHF', 'JPY', 'HKD', 'SGD', 'CNY', 'AUD', 'CAD']
 const REGIONS = ['US', 'GB', 'CH', 'DE', 'FR', 'NL', 'JP', 'CN', 'KR', 'TW', 'EM Asia', 'Europe', 'Global']
-const METRIC_INPUTS = ['revenue', 'ebitda', 'net_income', 'last_nav', 'expected_yield', 'occupancy_rate']
+const METRIC_INPUTS = ['revenue', 'ebitda', 'net_income', 'net_debt', 'leverage', 'last_nav', 'expected_yield', 'occupancy_rate']
 
 type Form = Record<string, string>
 type CallRow = { date: string; amount: string; purpose: string }
@@ -187,6 +188,8 @@ export function AddPrivateAsset({
           <Field label="Revenue"><input type="number" className={inputCls} value={form.revenue ?? ''} onChange={(e) => set('revenue', e.target.value)} placeholder="e.g. 18000" /></Field>
           <Field label="EBITDA"><input type="number" className={inputCls} value={form.ebitda ?? ''} onChange={(e) => set('ebitda', e.target.value)} placeholder="e.g. 5200" /></Field>
           <Field label="Net income"><input type="number" className={inputCls} value={form.net_income ?? ''} onChange={(e) => set('net_income', e.target.value)} placeholder="e.g. 2600" /></Field>
+          <Field label="Net debt"><input type="number" className={inputCls} value={form.net_debt ?? ''} onChange={(e) => set('net_debt', e.target.value)} placeholder="e.g. 30000 (net cash: negative)" /></Field>
+          <Field label="Leverage (net debt / EBITDA)"><input type="number" step="0.1" className={inputCls} value={form.leverage ?? ''} onChange={(e) => set('leverage', e.target.value)} placeholder="e.g. 5.0 — else derived from net debt" /></Field>
           <Field label="Last NAV / market value"><input type="number" className={inputCls} value={form.last_nav ?? ''} onChange={(e) => set('last_nav', e.target.value)} placeholder="e.g. 90000" /></Field>
           <Field label="Expected yield (decimal)"><input type="number" step="0.001" className={inputCls} value={form.expected_yield ?? ''} onChange={(e) => set('expected_yield', e.target.value)} placeholder="e.g. 0.075" /></Field>
           <Field label="Occupancy rate (decimal)"><input type="number" step="0.01" className={inputCls} value={form.occupancy_rate ?? ''} onChange={(e) => set('occupancy_rate', e.target.value)} placeholder="e.g. 0.93" /></Field>
@@ -318,6 +321,7 @@ export function AddPrivateAsset({
           </>
         )}
 
+        {proxy?.capital_structure && <div className="mt-4"><CapitalStructureCard cs={proxy.capital_structure} /></div>}
         {proxy?.capital_call && <div className="mt-4"><CapitalCallCard cc={proxy.capital_call} /></div>}
       </div>
     </div>

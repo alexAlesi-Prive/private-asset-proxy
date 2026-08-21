@@ -55,7 +55,8 @@ class PrivateHolding:
     sector: str | None = None
     last_nav: float | None = None          # in `currency`; anchoring/validation only
     last_nav_date: date | None = None
-    leverage: float | None = None
+    leverage: float | None = None          # net debt / EBITDA multiple (capital structure)
+    net_debt: float | None = None          # net debt (size); derives leverage & Hamada relevering
 
     # --- fundamentals: direct equity / real estate ---
     industry_group: str | None = None
@@ -71,7 +72,7 @@ class PrivateHolding:
     seniority: str | None = None
     credit_rating: str | None = None
 
-    # --- fundamentals: funds / hedge funds ---
+    # --- fundamentals: funds (PE / PD / RE) ---
     strategy_type: str | None = None
     vintage_year: int | None = None
 

@@ -27,7 +27,11 @@ class AssetClassType(str, Enum):
     PRIVATE_EQUITY_FUND = "PRIVATE_EQUITY_FUND"
     PRIVATE_DEBT_FUND = "PRIVATE_DEBT_FUND"
     REAL_ESTATE_FUND = "REAL_ESTATE_FUND"
-    HEDGE_FUND = "HEDGE_FUND"
+    # Hedge funds are deliberately NOT supported here. Strategy type + vintage
+    # cannot place a market-neutral / macro fund in a revenue/EBITDA metric
+    # space; the accepted method is return-based style analysis (Sharpe), which
+    # is out of scope for this comparable-construction build. Such holdings are
+    # routed to manual mapping (classify() returns None). See docs §2.
 
 
 # Canonical input fields that MUST be present for a holding to be auto-mapped.
@@ -40,27 +44,26 @@ MANDATORY_INPUTS: dict[AssetClassType, tuple[str, ...]] = {
     AssetClassType.PRIVATE_EQUITY_FUND: ("region", "sector", "strategy_type"),
     AssetClassType.PRIVATE_DEBT_FUND: ("region", "sector", "strategy_type"),
     AssetClassType.REAL_ESTATE_FUND: ("region", "strategy_type"),
-    AssetClassType.HEDGE_FUND: ("strategy_type",),
 }
 
 # Canonical input fields that SHARPEN the mapping when present but are not
 # required. Their coverage feeds the confidence flag on the produced proxy.
 OPTIONAL_INPUTS: dict[AssetClassType, tuple[str, ...]] = {
     AssetClassType.DIRECT_PRIVATE_EQUITY: (
-        "industry_group", "revenue", "ebitda", "net_income", "currency",
+        "industry_group", "revenue", "ebitda", "net_income", "net_debt",
+        "leverage", "currency",
     ),
     AssetClassType.DIRECT_PRIVATE_DEBT: (
         "industry_group", "expected_yield", "maturity", "seniority",
         "credit_rating", "currency",
     ),
     AssetClassType.DIRECT_REAL_ESTATE: (
-        "revenue", "ebitda", "net_income", "occupancy_rate", "property_type",
-        "currency",
+        "revenue", "ebitda", "net_income", "net_debt", "leverage",
+        "occupancy_rate", "property_type", "currency",
     ),
     AssetClassType.PRIVATE_EQUITY_FUND: ("currency", "vintage_year"),
     AssetClassType.PRIVATE_DEBT_FUND: ("currency", "vintage_year"),
     AssetClassType.REAL_ESTATE_FUND: ("sector", "currency", "vintage_year"),
-    AssetClassType.HEDGE_FUND: ("region", "sector", "currency"),
 }
 
 
@@ -77,8 +80,6 @@ _ALIASES: dict[str, AssetClassType] = {
     "pefund": AssetClassType.PRIVATE_EQUITY_FUND,
     "pdfund": AssetClassType.PRIVATE_DEBT_FUND,
     "refund": AssetClassType.REAL_ESTATE_FUND,
-    "hedgefunds": AssetClassType.HEDGE_FUND,
-    "hf": AssetClassType.HEDGE_FUND,
 }
 
 

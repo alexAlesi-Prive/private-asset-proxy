@@ -30,6 +30,25 @@ export function CapitalCallCard({ cc }: { cc: CapitalCall }) {
         />
       </div>
 
+      {cc.deployment && (cc.deployment.j_curve_stage || cc.deployment.fund_age_years != null) && (
+        <div className="mt-3 border-t border-border pt-3">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] uppercase tracking-wide text-tertiary font-semibold">Deployment · J-curve</span>
+            {cc.deployment.j_curve_stage && (
+              <span className="inline-block rounded-full bg-secondary/10 border border-secondary/30 px-2 py-0.5 text-[11px] font-medium text-secondary capitalize">
+                {cc.deployment.j_curve_stage}
+              </span>
+            )}
+          </div>
+          <JCurve stage={cc.deployment.j_curve_stage} />
+          <div className="grid grid-cols-3 gap-x-4 gap-y-1 text-sm mt-2">
+            <Stat label="Vintage" value={cc.deployment.vintage_year != null ? String(cc.deployment.vintage_year) : '—'} />
+            <Stat label="Fund age" value={cc.deployment.fund_age_years != null ? `${cc.deployment.fund_age_years}y` : '—'} />
+            <Stat label="% called" value={cc.deployment.pct_called != null ? `${(cc.deployment.pct_called * 100).toFixed(0)}%` : '—'} />
+          </div>
+        </div>
+      )}
+
       {cc.calls?.length > 0 && (
         <div className="mt-3 overflow-x-auto">
           <table className="w-full text-xs">
@@ -58,6 +77,22 @@ export function CapitalCallCard({ cc }: { cc: CapitalCall }) {
       )}
 
       <p className="text-[11px] text-tertiary mt-2">{cc.note}</p>
+    </div>
+  )
+}
+
+const J_STAGES = ['investing', 'deploying', 'maturing', 'harvesting']
+
+function JCurve({ stage }: { stage?: string | null }) {
+  const idx = stage ? J_STAGES.indexOf(stage) : -1
+  return (
+    <div className="flex gap-1">
+      {J_STAGES.map((s, i) => (
+        <div key={s} className="flex-1">
+          <div className={`h-1.5 rounded-full ${i <= idx ? 'bg-secondary' : 'bg-border'}`} />
+          <div className={`mt-1 text-[9px] text-center capitalize ${i === idx ? 'text-secondary font-semibold' : 'text-tertiary'}`}>{s}</div>
+        </div>
+      ))}
     </div>
   )
 }
