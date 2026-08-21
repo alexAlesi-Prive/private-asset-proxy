@@ -23,12 +23,12 @@ export function Backtest() {
         <h2 className="text-lg font-semibold text-primary">Out-of-sample backtest</h2>
         <p className="text-sm text-tertiary">
           {data.n_tested} traded assets held out one at a time, treated as private, and proxied from the rest of the
-          universe. We then compare each proxy basket's realised returns to the asset's own — a genuine out-of-sample
+          universe. We then compare each proxy basket's realised returns to the asset's own - a genuine out-of-sample
           test over {data.periods} monthly periods.
         </p>
       </div>
 
-      {/* Illustrative-data disclosure — do not overclaim. */}
+      {/* Illustrative-data disclosure - do not overclaim. */}
       <div className="rounded-lg border border-secondary/30 bg-secondary/[0.06] px-4 py-3 mb-5 text-sm text-ink">
         <span className="font-semibold text-secondary">Illustrative returns.</span>{' '}
         Return series in this prototype are <span className="font-medium">simulated</span> from a transparent
@@ -36,7 +36,7 @@ export function Backtest() {
         In production the identical backtest runs on the client's <span className="font-medium">real return history</span>;
         only the data source changes. By construction the <span className="font-medium">systematic</span> (market/sector)
         component is capturable by comparables while <span className="font-medium">single-name idiosyncratic</span> risk
-        is not — which is exactly what a proxy is meant to represent.
+        is not - which is exactly what a proxy is meant to represent.
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">

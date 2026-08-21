@@ -1,6 +1,6 @@
 """The engine's canonical typed input model for a private/illiquid holding.
 
-Everything downstream of ingestion — mapping, explanation, validation, UI —
+Everything downstream of ingestion - mapping, explanation, validation, UI -
 consumes :class:`PrivateHolding`, never a data source's raw shape. Adapters are
 responsible for producing these objects (see ``engine/adapters``).
 
@@ -99,7 +99,7 @@ class PrivateHolding:
     def missing_mandatory_inputs(self) -> list[str]:
         """Mandatory canonical fields (for this class) that are absent/blank.
 
-        Returns an empty list when the class is unknown — validity of an
+        Returns an empty list when the class is unknown - validity of an
         unknown-class holding is reported separately by :meth:`validate`.
         """
         if self.asset_class is None:

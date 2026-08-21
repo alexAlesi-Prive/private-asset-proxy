@@ -1,11 +1,11 @@
 """Capital-structure (Hamada) beta relevering for the proxy basket.
 
 Standard comparable-company practice does not compare a levered private holding
-to a listed comp at face value: a sponsor-backed deal running at 4–6x net
-debt/EBITDA has a very different *equity* beta from a listed comparable at 1–2x,
+to a listed comp at face value: a sponsor-backed deal running at 4-6x net
+debt/EBITDA has a very different *equity* beta from a listed comparable at 1-2x,
 purely because of capital structure. The accepted correction is to **unlever**
 each comparable's equity beta to an asset (unlevered) beta and **relever** it to
-the holding's own leverage — the Hamada relation:
+the holding's own leverage - the Hamada relation:
 
     βL = βU · [ 1 + (1 − t) · (D/E) ]
 

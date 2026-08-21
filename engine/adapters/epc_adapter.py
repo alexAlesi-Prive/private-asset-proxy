@@ -2,7 +2,7 @@
 
 This is the ONLY module that knows the shape of an EPC holding record. It maps
 raw EPC records onto :class:`PrivateHolding`. When a live EPC endpoint/export is
-confirmed, adjust :data:`FIELD_MAP` (and, if fetching live, add a fetch method) —
+confirmed, adjust :data:`FIELD_MAP` (and, if fetching live, add a fetch method) -
 nothing else in the engine changes.
 
 Design notes
@@ -11,7 +11,7 @@ Design notes
   canonical field lists several accepted source spellings, so minor EPC naming
   differences do not break ingestion.
 * Values are coerced defensively (numbers from strings with %/commas; ISO or
-  DD/MM/YYYY dates) and failures degrade to ``None`` rather than raising — an
+  DD/MM/YYYY dates) and failures degrade to ``None`` rather than raising - an
   unmapped or unparseable optional field must never crash ingestion.
 * Every unmapped source key is preserved in ``raw`` for audit and future use.
 

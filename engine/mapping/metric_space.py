@@ -1,7 +1,7 @@
 """Shared metric space: turn any asset (private or traded) into comparable coordinates.
 
 The engine compares holdings to traded assets purely on their fundamental
-metrics (Privé's approach — no fixed factor library). This module extracts those
+metrics (Privé's approach - no fixed factor library). This module extracts those
 metrics, log-scales size variables, z-scores everything against the baseline
 universe, and measures distance. Pure functions; no I/O.
 
@@ -34,7 +34,7 @@ def extract_metrics(obj: Any) -> dict[str, float]:
     attribute lookup. Derived metrics are computed when their parts exist.
     ``market_value`` unifies a traded asset's market cap and a private holding's
     last NAV as a size anchor. ``leverage`` (net debt / EBITDA) captures capital
-    structure — supplied directly, else derived from ``net_debt`` and EBITDA.
+    structure - supplied directly, else derived from ``net_debt`` and EBITDA.
     """
     def g(name: str) -> float | None:
         v = getattr(obj, name, None)
@@ -65,7 +65,7 @@ def extract_metrics(obj: Any) -> dict[str, float]:
         m["ebitda_margin"] = ebitda / rev
     if rev not in (None, 0) and ni is not None:
         m["net_margin"] = ni / rev
-    # Leverage (net debt / EBITDA): explicit multiple wins, else derive it — but
+    # Leverage (net debt / EBITDA): explicit multiple wins, else derive it - but
     # only for positive EBITDA, where the multiple is meaningful.
     if leverage is not None:
         m["leverage"] = leverage
@@ -75,7 +75,7 @@ def extract_metrics(obj: Any) -> dict[str, float]:
 
 
 def _slog(x: float) -> float:
-    """Signed log1p — compresses order-of-magnitude size metrics, keeps sign."""
+    """Signed log1p - compresses order-of-magnitude size metrics, keeps sign."""
     return math.copysign(math.log1p(abs(x)), x)
 
 
@@ -159,7 +159,7 @@ def _matrix_inverse(mat: list[list[float]]) -> list[list[float]]:
 class DistanceModel:
     """Distance between a holding and a comparable in standardised metric space.
 
-    ``method`` is ``"mahalanobis"`` (default — divides out inter-metric
+    ``method`` is ``"mahalanobis"`` (default - divides out inter-metric
     correlation) or ``"euclidean"``. ``weights`` re-emphasise metrics (applied as
     ``√w`` scaling of each standardised axis, so weighting is consistent between
     the two methods and the covariance used by Mahalanobis). ``ridge`` shrinks

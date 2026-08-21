@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react'
 
-// User-toggled expandable section — collapsed by default, opened when applicable.
+// User-toggled expandable section - collapsed by default, opened when applicable.
 export function Collapsible({
   title, subtitle, defaultOpen = false, children,
 }: {

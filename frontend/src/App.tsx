@@ -78,7 +78,7 @@ export default function App() {
             Could not reach the engine API: {error}
           </div>
         )}
-        {/* About is static pitch content — always available, even before the engine responds. */}
+        {/* About is static pitch content - always available, even before the engine responds. */}
         {tab === 'about' ? (
           <About />
         ) : !config ? (

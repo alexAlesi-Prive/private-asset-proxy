@@ -61,23 +61,25 @@ export function ProxyView({ proxy, baseline, config }: {
         {proxy.filters_relaxed && <span className="text-danger">filters relaxed</span>}
       </div>
 
-      <div className={hasSidebar ? 'grid lg:grid-cols-2 gap-6 items-start' : ''}>
-        {/* left: scatter + basket */}
+      {/* scatter spans the full modal width */}
+      <ScatterPanel
+        availableAxes={config.scatter.available_axes}
+        defaultX={config.scatter.default_x}
+        defaultY={config.scatter.default_y}
+        buildSeries={buildSeries}
+        height={400}
+        legend={[
+          { name: 'Baseline', color: '#CBD5E1' },
+          { name: 'Comparables', color: '#1F6FA8' },
+          { name: 'This holding', color: '#0E3C5C', shape: 'ring' },
+          { name: 'Proxy', color: '#5FC08D', shape: 'diamond' },
+        ]}
+      />
+
+      {/* basket list on the left, capital-structure / capital-call cards beside it */}
+      <div className={`mt-6 ${hasSidebar ? 'grid lg:grid-cols-2 gap-6 items-start' : ''}`}>
         <div>
-          <ScatterPanel
-            availableAxes={config.scatter.available_axes}
-            defaultX={config.scatter.default_x}
-            defaultY={config.scatter.default_y}
-            buildSeries={buildSeries}
-            height={320}
-            legend={[
-              { name: 'Baseline', color: '#CBD5E1' },
-              { name: 'Comparables', color: '#1F6FA8' },
-              { name: 'This holding', color: '#0E3C5C', shape: 'ring' },
-              { name: 'Proxy', color: '#5FC08D', shape: 'diamond' },
-            ]}
-          />
-          <h3 className="text-sm font-semibold text-primary mt-4 mb-1">Basket composition</h3>
+          <h3 className="text-sm font-semibold text-primary mb-1">Basket composition</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -102,7 +104,6 @@ export function ProxyView({ proxy, baseline, config }: {
           </div>
         </div>
 
-        {/* right: capital structure + capital call, next to the scatter */}
         {hasSidebar && (
           <div className="mt-6 lg:mt-0 space-y-4">
             {proxy.capital_structure && <CapitalStructureCard cs={proxy.capital_structure} />}

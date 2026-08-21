@@ -1,9 +1,9 @@
-# Privé Technologies — Private Asset Methodology
+# Privé Technologies - Private Asset Methodology
 
 **Risk & Analytics Representation of Illiquid Private Holdings**
 Comparable-based proxy construction for private & illiquid assets.
 
-**Version 1.1 — 2026-08-21** (supersedes v1.0, 2025-07-10)
+**Version 1.1 - 2026-08-21** (supersedes v1.0, 2025-07-10)
 Config version at time of writing: `2026-08-21.1` (`engine/config/mappings.yaml`).
 
 > This document is the white paper of record. It takes the v1.0 white paper as
@@ -37,7 +37,7 @@ illiquid holding has no continuous, market-observable price series, so a risk
 engine cannot treat it like a listed line item. Privé resolves this with a
 **proxy-asset**: an explicit, auditable representation of the holding built
 entirely from liquid, traded assets, so the private holding can flow through the
-same analytics as a listed position — Value-at-Risk and Conditional VaR,
+same analytics as a listed position - Value-at-Risk and Conditional VaR,
 tracking error, stress tests, factor attribution, contribution-to-risk and
 coverage.
 
@@ -49,7 +49,7 @@ only; it is never re-derived as an output (see §2.2).
 
 ---
 
-## 2. What a proxy-asset is — and how Privé builds it
+## 2. What a proxy-asset is - and how Privé builds it
 
 A proxy-asset maps an illiquid private holding onto a basket of liquid traded
 assets whose combined market behaviour approximates that of the holding. Because
@@ -60,7 +60,7 @@ proxy.
 ### 2.1 Approximation from input metrics (no factor library)
 
 Privé does not rely on a fixed, curated library of named risk factors. The proxy
-is constructed entirely by approximation from the holding's own input metrics —
+is constructed entirely by approximation from the holding's own input metrics -
 the fundamentals the user supplies (revenue, EBITDA, net income, margins, size,
 leverage, yield). Concretely:
 
@@ -68,16 +68,16 @@ leverage, yield). Concretely:
 2. Every asset (traded or private) is therefore a **point in a shared metric space**.
 3. The private holding is placed in that space from its supplied metrics.
 4. Its proxy is a **weighted basket of the traded assets nearest to it** in that
-   space — its closest comparables.
+   space - its closest comparables.
 
 This is a comparable-company / nearest-neighbour construction in standardised
 metric space. It is deliberately simple, transparent and defensible: there is no
 black-box factor model and no proprietary factor table. The "factors" are the
 client-visible input metrics themselves, and the construction visualises
-naturally — assets are dots in metric space and the holding and its proxy sit in
+naturally - assets are dots in metric space and the holding and its proxy sit in
 the same picture (§5.5).
 
-### 2.2 What the proxy claims — and the fundamental-similarity caveat *(updated)*
+### 2.2 What the proxy claims - and the fundamental-similarity caveat *(updated)*
 
 The proxy answers a **behavioural** question, not a valuation question:
 
@@ -86,13 +86,13 @@ The proxy answers a **behavioural** question, not a valuation question:
 | **Purpose** | Risk & portfolio analytics representation | Valuation / fair-value marking |
 | **Question** | "How does this holding *behave* vs. traded markets?" | "What is it *worth* today?" |
 | **Output** | A basket of traded comparables (weights) the analytics stack can consume | (none) |
-| **NAV role** | Input — anchoring & validation only | Not re-derived |
+| **NAV role** | Input - anchoring & validation only | Not re-derived |
 
 **Fundamental similarity is not, by itself, return co-movement.** The distance
 metric optimises for *fundamental* resemblance; what a VaR/covariance engine
-ultimately needs is *return* co-movement. These are related — assets with similar
+ultimately needs is *return* co-movement. These are related - assets with similar
 size, profitability and leverage in the same sector tend to share systematic risk
-— but the link is an **empirical** claim, not a geometric identity. v1.1 does not
+- but the link is an **empirical** claim, not a geometric identity. v1.1 does not
 assert it; it **measures** it, out of sample, in the validation harness (§6). The
 honest division of labour is: a proxy is designed to capture the **systematic /
 market** component of a holding's behaviour; it does **not** capture single-name
@@ -101,7 +101,7 @@ quantifies both sides of that line.
 
 ---
 
-## 3. Supported private asset classes *(updated — Hedge Fund removed)*
+## 3. Supported private asset classes *(updated - Hedge Fund removed)*
 
 - Direct Private Equity · Direct Private Debt · Direct Real Estate
 - Private Equity Fund · Private Debt Fund · Real Estate Fund
@@ -111,7 +111,7 @@ guessed.
 
 **Hedge funds are deliberately not supported here.** Strategy type plus vintage
 year cannot place a market-neutral or macro fund in a revenue/EBITDA metric
-space — a hedge fund's return behaviour is defined by its *strategy exposures*,
+space - a hedge fund's return behaviour is defined by its *strategy exposures*,
 not by company fundamentals. The accepted method is **return-based style analysis**
 (à la Sharpe), which is a different tool and out of scope for this
 comparable-construction build. A hedge-fund holding therefore classifies as
@@ -126,16 +126,16 @@ uses whatever is present and degrades gracefully, flagging confidence
 accordingly. A small set of inputs is required only to make a **minimum
 computation** possible.
 
-### 4.1 Required for a minimum computation — and what the baseline universe is *(updated)*
+### 4.1 Required for a minimum computation - and what the baseline universe is *(updated)*
 
-- **Name** — identity.
-- **Asset class** (§3) — selects and filters the eligible comparables.
-- **Currency** (ISO-4217) — representation and anchoring.
-- **At least one numeric metric** — a holding with no metric cannot be placed in
+- **Name** - identity.
+- **Asset class** (§3) - selects and filters the eligible comparables.
+- **Currency** (ISO-4217) - representation and anchoring.
+- **At least one numeric metric** - a holding with no metric cannot be placed in
   metric space.
 
 **Definition of the baseline traded universe.** The comparables are drawn from
-the **client's own investible universe** — the set of liquid, traded instruments
+the **client's own investible universe** - the set of liquid, traded instruments
 the client is entitled to via their market-data subscription. There is no single
 global universe: the pool of eligible proxies matches each client's entitlement,
 so a client with broad EM coverage draws EM comparables, and a client with only
@@ -146,7 +146,7 @@ is not licensed market data, not a recommended universe, and is replaced per
 client at deployment. (This is surfaced as a heads-up banner on the Baseline
 Universe screen.)
 
-### 4.2 Metric inputs *(updated — leverage added)*
+### 4.2 Metric inputs *(updated - leverage added)*
 
 Numeric fundamentals used as coordinates in the comparison space. Each one
 supplied sharpens the match; absent ones are dropped and noted (see §7 for the
@@ -160,14 +160,14 @@ implication).
   is a first-class matching axis (§4.3).
 - **Debt-specific:** expected yield, maturity / tenor, seniority, credit rating.
 - **Real-estate-specific:** occupancy rate, property type.
-- **Fund-specific:** strategy type, vintage year (used numerically — §5.6).
+- **Fund-specific:** strategy type, vintage year (used numerically - §5.6).
 
 ### 4.3 Capital structure & leverage (Hamada relevering) *(new)*
 
 Standard comparable-company practice does not compare a levered private holding
-to a listed comp at face value. A sponsor-backed deal running at **4–6× net
+to a listed comp at face value. A sponsor-backed deal running at **4-6× net
 debt/EBITDA** has a materially different **equity beta** from a listed comparable
-at 1–2×, purely because of capital structure. v1.1 addresses this in two ways:
+at 1-2×, purely because of capital structure. v1.1 addresses this in two ways:
 
 1. **Leverage is a matching metric.** Because net-debt/EBITDA is one of the
    coordinates, comparables are selected with a *similar capital structure* in the
@@ -187,7 +187,7 @@ at 1–2×, purely because of capital structure. v1.1 addresses this in two ways
    comparable) and `t` is a configurable marginal tax rate (default 25%). A factor
    > 1 means the holding is more levered than its comparables, so its equity beta
    is scaled **up**; < 1 means the opposite. This is a **reported adjustment** the
-   analytics stack applies to the proxy's beta — it does **not** re-select
+   analytics stack applies to the proxy's beta - it does **not** re-select
    comparables. When the inputs needed (net debt / leverage and equity) are
    absent, leverage still serves as a matching metric and the relever factor is
    simply omitted.
@@ -205,16 +205,16 @@ fraction is paid in (called) at any time; the remainder is uncalled capital
 subject to future drawdowns. These optional inputs are surfaced in a user-toggled
 section:
 
-- **Commitment** — total committed capital.
-- **Paid-in (called to date)** — cumulative capital contributed; defaults to the
+- **Commitment** - total committed capital.
+- **Paid-in (called to date)** - cumulative capital contributed; defaults to the
   sum of the calls if a schedule is supplied.
-- **Capital-call line of credit** — a facility LPs use to bridge calls.
-- **Capital-call schedule** — individual drawdowns, each with a date, amount and
+- **Capital-call line of credit** - a facility LPs use to bridge calls.
+- **Capital-call schedule** - individual drawdowns, each with a date, amount and
   purpose.
 
 ---
 
-## 5. Proxy construction — the mapping logic
+## 5. Proxy construction - the mapping logic
 
 Construction is a deterministic, config-driven pipeline
 (`engine/config/mappings.yaml`, versioned). The mapping core is built from pure
@@ -224,22 +224,22 @@ weighting (§5.4).
 
 The pipeline:
 
-1. **Select metrics** — the configured comparison metrics present on the holding.
+1. **Select metrics** - the configured comparison metrics present on the holding.
    Absent optional metrics are dropped from the distance calculation and noted.
-2. **Transform & standardise** — size-like metrics (revenue, EBITDA, net income,
+2. **Transform & standardise** - size-like metrics (revenue, EBITDA, net income,
    market value, net debt) are log-scaled; every metric is z-scored against the
    baseline universe's mean and σ. Transform parameters are recorded for audit.
-3. **Filter comparables (optional)** — restrict by sector and/or region per
+3. **Filter comparables (optional)** - restrict by sector and/or region per
    config; if too few remain, relax and record that the relaxation fired.
-4. **Distance** — the standardised distance from the holding to each eligible
+4. **Distance** - the standardised distance from the holding to each eligible
    traded asset over the selected metrics (§5.2).
 5. **Select the k nearest** comparables (config `k`, with a configured minimum).
-6. **Weight** — convert distances to weights, normalised to sum to 100%, subject
+6. **Weight** - convert distances to weights, normalised to sum to 100%, subject
    to a distance floor and a single-name cap (§5.4).
-7. **Proxy point** — the weighted average of the comparables' coordinates gives
+7. **Proxy point** - the weighted average of the comparables' coordinates gives
    the proxy's implied position in metric space (for the scatter view).
-8. **Capital-structure relevering** — the Hamada relever factor (§4.3).
-9. **Confidence / coverage** — driven by how many metrics were available, how
+8. **Capital-structure relevering** - the Hamada relever factor (§4.3).
+9. **Confidence / coverage** - driven by how many metrics were available, how
    close the nearest comparables are (on the RMS scale), and whether filters were
    relaxed → high / medium / low.
 
@@ -272,8 +272,8 @@ v1.1 makes three corrections:
 
 - **RMS normalisation.** The distance is divided by the number of contributing
   dimensions (root-mean-square), so a "distance of 1" means the same thing whether
-  a holding was matched on two metrics or six. This makes distances — and hence
-  the confidence thresholds — comparable across holdings with different coverage.
+  a holding was matched on two metrics or six. This makes distances - and hence
+  the confidence thresholds - comparable across holdings with different coverage.
 
   ```
   d(h, aᵢ)_euclidean   = √( (1/n) · Σⱼ wⱼ (z_hj − z_ij)² )
@@ -288,15 +288,15 @@ v1.1 makes three corrections:
 - Identical inputs plus identical config version produce an identical proxy. The
   config version is stamped on every explanation object.
 
-### 5.4 Weighting guards — distance floor and single-name cap *(new)*
+### 5.4 Weighting guards - distance floor and single-name cap *(new)*
 
 Inverse-distance weighting degenerates: a comparable at near-zero distance would
 take a near-100% weight, collapsing the basket to a single name. Two config
 guards prevent this:
 
-- **Distance floor** (default 0.35, standardised RMS units) — the distance used
+- **Distance floor** (default 0.35, standardised RMS units) - the distance used
   in the weighting is floored, so an extremely close comparable cannot dominate.
-- **Single-name cap** (default 35%) — any weight above the cap is water-filled
+- **Single-name cap** (default 35%) - any weight above the cap is water-filled
   onto the remaining comparables, so `k ≥ 3` names genuinely share the basket.
 
 Softmax weighting remains available as an alternative to inverse-distance.
@@ -308,7 +308,7 @@ transforms; the **distance metric** used; filters applied and any relaxation;
 comparables chosen with their distances and weights; the proxy composition and
 implied proxy point; the capital-structure relever; the confidence flag; and the
 config version and timestamp. Because every asset is a point in metric space, the
-construction is directly viewable — the user picks any two metrics as x/y axes and
+construction is directly viewable - the user picks any two metrics as x/y axes and
 sees the baseline, the holding, the proxy point and the weighted comparables in
 one picture.
 
@@ -325,8 +325,8 @@ markets. The engine derives, deterministically:
 | **Paid-in** | explicit paid-in, else the sum of the capital-call schedule |
 | **Uncalled commitment** | commitment − paid-in |
 | **% called** | paid-in ÷ commitment |
-| **Effective market exposure** | NAV if marked, else paid-in — the notional the proxy basket represents |
-| **Net uncovered commitment** | max(uncalled − capital-call line, 0) — contingent liquidity not covered by a facility |
+| **Effective market exposure** | NAV if marked, else paid-in - the notional the proxy basket represents |
+| **Net uncovered commitment** | max(uncalled − capital-call line, 0) - contingent liquidity not covered by a facility |
 | **Each call's share** | call amount ÷ commitment |
 
 **Key risk treatment.** Effective market exposure is sized to invested capital
@@ -334,12 +334,12 @@ markets. The engine derives, deterministically:
 obligation, not market exposure**. Applying the proxy's market beta to the full
 commitment would overstate market risk; ignoring the uncalled portion would
 understate liquidity risk. The engine reports both figures side by side. This
-capital-call section is unchanged from v1.0 — it was already correct.
+capital-call section is unchanged from v1.0 - it was already correct.
 
 **Vintage & the J-curve (new).** Vintage year is used **numerically**, not as a
 categorical label. A 2024-vintage fund at 20% called behaves nothing like a 2016
 vintage at full deployment. The engine derives **fund age** (as-of year −
-vintage) and, combined with **% called**, a **deployment (J-curve) stage** —
+vintage) and, combined with **% called**, a **deployment (J-curve) stage** -
 `investing → deploying → maturing → harvesting`. Deployment dominates when known;
 age is the fallback. This tells the risk team how much of the commitment is
 actually market-exposed today and where the fund sits on its J-curve, rather than
@@ -347,7 +347,7 @@ bucketing by vintage label.
 
 ---
 
-## 6. Validation — out-of-sample backtest *(new)*
+## 6. Validation - out-of-sample backtest *(new)*
 
 The first question any model-validation function asks is: *what is the tracking
 error of the proxy against realised returns?* v1.1 answers it with a
@@ -355,7 +355,7 @@ error of the proxy against realised returns?* v1.1 answers it with a
 
 1. Take a hold-out sample of traded assets and **treat each as if it were
    private** (its fundamentals only).
-2. Build a proxy for it from the **rest** of the universe — the held-out asset is
+2. Build a proxy for it from the **rest** of the universe - the held-out asset is
    excluded, so the test is genuinely out of sample.
 3. Compare the proxy basket's realised return series to the asset's own:
    **annualised tracking error**, **correlation**, **R²** and **beta**.
@@ -363,15 +363,15 @@ error of the proxy against realised returns?* v1.1 answers it with a
    beta).
 
 **What the numbers show, honestly.** Tracking error is dominated by the held-out
-name's **single-name idiosyncratic** risk, which no proxy can capture — the proxy
+name's **single-name idiosyncratic** risk, which no proxy can capture - the proxy
 is built to represent **systematic / market** behaviour, which the correlation,
 R² and beta columns measure. A proxy that explains ~half the variance and matches
 beta, with residual tracking error at the level of single-name idiosyncratic
-vol, is behaving exactly as the methodology claims (§2.2) — no more, no less.
+vol, is behaving exactly as the methodology claims (§2.2) - no more, no less.
 
 **On the returns used.** In this prototype the return series are **illustrative /
-simulated** — a transparent factor model (market + sector + single-name
-idiosyncratic) — so the harness and its statistics can be demonstrated end to
+simulated** - a transparent factor model (market + sector + single-name
+idiosyncratic) - so the harness and its statistics can be demonstrated end to
 end. The systematic component is capturable by comparables while the idiosyncratic
 component is not, by construction. **In production the identical backtest runs on
 the client's real return history**; only the data source changes, not the method.
@@ -379,7 +379,7 @@ This is surfaced prominently on the Backtest screen.
 
 ---
 
-## 7. The absent-metric prior — an honest note *(new)*
+## 7. The absent-metric prior - an honest note *(new)*
 
 Dropping a metric a holding does not supply is not neutral. Two consequences are
 stated plainly rather than hidden behind "graceful degradation":
@@ -387,12 +387,12 @@ stated plainly rather than hidden behind "graceful degradation":
 - **It is an indifference prior on that axis.** A holding is only compared on the
   metrics it actually has; comparables are required to share those metrics. Not
   constraining an axis is closer to "match anywhere on this axis" than to "assume
-  the universe mean" — either way it is a prior, and it is disclosed via the
+  the universe mean" - either way it is a prior, and it is disclosed via the
   confidence flag and the list of metrics used.
 - **Distances are made comparable across coverage.** Because distance is
   RMS-normalised (§5.2), a holding matched on two metrics and one matched on six
   sit on the same distance scale, so the near/far confidence thresholds mean the
-  same thing for both. This does not manufacture the missing information — it
+  same thing for both. This does not manufacture the missing information - it
   simply stops coverage differences from silently distorting the geometry, and
   low coverage is still flagged as lower confidence.
 
@@ -406,7 +406,7 @@ stated plainly rather than hidden behind "graceful degradation":
   proxy.
 - **NAV roll-forward (analytics continuity only).** Between NAV dates, the proxy's
   traded return series rolls the last reported NAV forward to give analytics a
-  continuous path — explicitly an estimated path, not a valuation, always
+  continuous path - explicitly an estimated path, not a valuation, always
   reconciled to the next reported NAV.
 
 ---
@@ -427,7 +427,7 @@ stated plainly rather than hidden behind "graceful degradation":
 | Uncalled fund commitment | Market exposure sized to invested capital; uncalled reported as contingent liquidity (§5.6) | n/a |
 
 **Caveats for a client risk team.** The proxy captures **systematic / market**
-behaviour via comparables — quantified out of sample in §6 — not deal-specific
+behaviour via comparables - quantified out of sample in §6 - not deal-specific
 outcomes (a write-down, capital-call timing, manager alpha). Proxy quality is
 bounded by the metrics the user can supply and by the breadth and quality of the
 client's baseline traded universe (§4.1). **Nothing here is a valuation.**
@@ -437,7 +437,7 @@ client's baseline traded universe (§4.1). **Nothing here is a valuation.**
 ## 10. End-to-end flow
 
 ```
-Add private holding — name, class, currency, metrics (metrics optional;
+Add private holding - name, class, currency, metrics (metrics optional;
         minimum = class + currency + ≥1 metric)
         │
         ▼
@@ -466,14 +466,14 @@ Validation: out-of-sample leave-one-out backtest (tracking error, correlation, R
 
 ---
 
-## Appendix A: Worked example — nearest-neighbour construction *(corrected)*
+## Appendix A: Worked example - nearest-neighbour construction *(corrected)*
 
 A compact two-metric example makes the construction concrete. Two metrics are
 used so it maps directly onto the scatter view. In production the same logic runs
 over every configured metric that is present, using the Mahalanobis distance of
 §5.2.
 
-**Holding H** — Direct Private Equity, Europe, Industrials. Supplied metrics:
+**Holding H** - Direct Private Equity, Europe, Industrials. Supplied metrics:
 revenue = $120m, EBITDA margin = 22%.
 
 Baseline standardisation parameters: `ln(revenue $m)`: mean 4.50, σ 1.20; EBITDA
@@ -487,28 +487,28 @@ Four eligible comparables, standardised, with their distance to H (illustrative)
 | A | 0.43 | 0.25 | 0.31 | Yes (1st) | 42.9% |
 | B | 0.00 | 0.88 | 0.45 | Yes (2nd) | 30.1% |
 | C | 0.67 | 0.75 | 0.49 | Yes (3rd) | 27.1% |
-| D | 0.17 | −0.38 | 0.88 | No | — |
+| D | 0.17 | −0.38 | 0.88 | No | - |
 
 With `k = 3`, comparables A, B and C are selected; inverse-distance weights
 (floored and capped per §5.4) give the basket. The implied proxy point is the
 weighted average of the comparables' coordinates, `z_proxy ≈ (0.36, 0.57)`, near
 H's `(0.24, 0.50)`.
 
-**What the proxy point does — and does not — tell you.** *(corrected)* The proxy
+**What the proxy point does - and does not - tell you.** *(corrected)* The proxy
 point sitting near H confirms only that the basket's average fundamentals are
-close to H's — it is a **consistency check on the construction**, nothing more.
+close to H's - it is a **consistency check on the construction**, nothing more.
 It is **not** evidence of proxy quality, because "the average of three points
 lands between them" is arithmetic, not tracking. The proxy point being near H
 says nothing about whether the basket's **returns** will co-move with H's. That
-question — the one a VaR/covariance engine cares about — is answered only by the
+question - the one a VaR/covariance engine cares about - is answered only by the
 **out-of-sample backtest (§6)**, which measures realised tracking error,
 correlation and beta. Read the proxy point as a sanity check; read §6 for
 quality.
 
 Because two metrics were used, the nearest comparable sits at a moderate
 distance, and no filter relaxation was needed, this example flags **Medium**
-confidence. The engine emits the whole computation — metrics, standardisation
+confidence. The engine emits the whole computation - metrics, standardisation
 parameters, distance metric, distances, the k-selection, the weights, the proxy
-point, the relever factor and the confidence flag — as the explanation object,
+point, the relever factor and the confidence flag - as the explanation object,
 versioned by config, ready for the analytics stack to consume the basket as a
 liquid line item.

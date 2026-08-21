@@ -1,6 +1,6 @@
 """Generator for the prototype baseline universe (engine/data/baseline_universe.json).
 
-PROTOTYPE DATA — NOT LICENSED MARKET DATA. These ~50 well-known public
+PROTOTYPE DATA - NOT LICENSED MARKET DATA. These ~50 well-known public
 companies carry *illustrative, rounded* fundamentals (USD millions) assembled
 only to demonstrate the comparable-construction engine and its scatter view. In
 production this universe is replaced by the EPC endpoint (see docs/provenance-note.md).

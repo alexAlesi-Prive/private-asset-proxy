@@ -29,8 +29,8 @@ export function CapitalStructureCard({ cs }: { cs: CapitalStructure }) {
         <Stat label="Basket leverage" value={lev(cs.basket_leverage)} hint="weighted avg" />
         <Stat label="Holding D/E" value={ratio(cs.holding_debt_to_equity)} hint="net debt / equity" />
         <Stat label="Basket D/E" value={ratio(cs.basket_debt_to_equity)} hint="weighted avg" />
-        <Stat label="Net debt" value={cs.holding_net_debt != null ? formatMetric('market_value', cs.holding_net_debt) : '—'} />
-        <Stat label="Equity (NAV)" value={cs.holding_equity != null ? formatMetric('market_value', cs.holding_equity) : '—'} />
+        <Stat label="Net debt" value={cs.holding_net_debt != null ? formatMetric('market_value', cs.holding_net_debt) : '-'} />
+        <Stat label="Equity (NAV)" value={cs.holding_equity != null ? formatMetric('market_value', cs.holding_equity) : '-'} />
       </div>
 
       <p className="text-[11px] text-tertiary mt-2">{cs.note}</p>
@@ -39,10 +39,10 @@ export function CapitalStructureCard({ cs }: { cs: CapitalStructure }) {
 }
 
 function lev(v: number | null | undefined): string {
-  return v == null ? '—' : `${v.toFixed(1)}x`
+  return v == null ? '-' : `${v.toFixed(1)}x`
 }
 function ratio(v: number | null | undefined): string {
-  return v == null ? '—' : v.toFixed(2)
+  return v == null ? '-' : v.toFixed(2)
 }
 function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (

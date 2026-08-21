@@ -1,7 +1,7 @@
 # Proxy-Asset construction configuration (versioned, audited).
 #
 # The mapping engine is config-driven: rules, metric selection, and weighting
-# live here — not in code — so methodology changes are reviewable and every
+# live here - not in code - so methodology changes are reviewable and every
 # produced proxy records the config version it was built with.
 version: "2026-08-21.1"
 
@@ -60,7 +60,7 @@ confidence:
   near_distance: 0.75          # mean comparable distance <= this -> close fit
   far_distance: 1.75           # mean comparable distance >= this -> poor fit
 
-# Capital structure (Hamada) beta relevering — see docs §4.3.
+# Capital structure (Hamada) beta relevering - see docs §4.3.
 leverage:
   marginal_tax_rate: 0.25      # tax shield term (1 - t) in the Hamada equation
 
