@@ -10,6 +10,7 @@ const COLS: { key: string; label: string; num?: boolean }[] = [
   { key: 'revenue', label: 'Revenue', num: true },
   { key: 'ebitda', label: 'EBITDA', num: true },
   { key: 'net_income', label: 'Net income', num: true },
+  { key: 'net_debt', label: 'Net debt', num: true },
   { key: 'market_value', label: 'Market value', num: true },
 ]
 
@@ -29,6 +30,15 @@ export function BaselineUniverse({ baseline }: { baseline: BaselineAsset[] }) {
 
   return (
     <div>
+      {/* Heads-up: what the baseline universe actually is. */}
+      <div className="rounded-lg border border-secondary/30 bg-secondary/[0.06] px-4 py-3 mb-4 text-sm text-ink">
+        <span className="font-semibold text-secondary">Heads-up — the baseline universe is client-specific.</span>{' '}
+        In production this is the <span className="font-medium">investible universe available to the client</span>: it
+        matches whatever market-data subscription they hold, so the pool of eligible proxies changes from client to
+        client. The list shown here is <span className="font-medium">illustrative prototype ("dummy") data</span> and is
+        not a fixed or recommended universe — each deployment is wired to the client's own EPC feed.
+      </div>
+
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div>
           <h2 className="text-lg font-semibold text-primary">Baseline traded universe</h2>
@@ -71,7 +81,7 @@ export function BaselineUniverse({ baseline }: { baseline: BaselineAsset[] }) {
                 <td className="px-3 py-2 text-tertiary">{a.sector}</td>
                 <td className="px-3 py-2 text-tertiary">{a.region}</td>
                 <td className="px-3 py-2 text-tertiary">{a.currency}</td>
-                {(['revenue', 'ebitda', 'net_income', 'market_value'] as const).map((m) => (
+                {(['revenue', 'ebitda', 'net_income', 'net_debt', 'market_value'] as const).map((m) => (
                   <td key={m} className="px-3 py-2 text-right tnum">
                     {formatMetric(m, a.metrics[m])}
                   </td>

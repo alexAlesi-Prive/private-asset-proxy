@@ -44,6 +44,7 @@ FIELD_MAP: dict[str, tuple[str, ...]] = {
                  "marketValue"),
     "last_nav_date": ("navDate", "lastNavDate", "valuationDate", "asOfDate"),
     "leverage": ("leverage", "grossLeverage"),
+    "net_debt": ("netDebt", "net_debt", "netDebtValue"),
     "industry_group": ("industryGroup", "industry_group", "industry"),
     "revenue": ("revenue", "sales"),
     "ebitda": ("ebitda",),
@@ -59,7 +60,7 @@ FIELD_MAP: dict[str, tuple[str, ...]] = {
 }
 
 _NUMERIC_FIELDS = {
-    "last_nav", "leverage", "revenue", "ebitda", "net_income",
+    "last_nav", "leverage", "net_debt", "revenue", "ebitda", "net_income",
     "occupancy_rate", "expected_yield",
 }
 _DATE_FIELDS = {"last_nav_date", "maturity"}
@@ -192,6 +193,7 @@ class EpcAdapter:
             last_nav=mapped.get("last_nav"),
             last_nav_date=mapped.get("last_nav_date"),
             leverage=mapped.get("leverage"),
+            net_debt=mapped.get("net_debt"),
             industry_group=_as_str(mapped.get("industry_group")),
             revenue=mapped.get("revenue"),
             ebitda=mapped.get("ebitda"),

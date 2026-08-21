@@ -3,29 +3,52 @@
 # The mapping engine is config-driven: rules, metric selection, and weighting
 # live here — not in code — so methodology changes are reviewable and every
 # produced proxy records the config version it was built with.
-version: "2026-07-08.1"
+version: "2026-08-21.1"
 
 construction:
   # Metrics used as coordinates in the comparison space. Only those present on a
   # given holding are used (all inputs are optional); absent ones are dropped.
+  # `leverage` (net debt / EBITDA) captures capital structure so a levered
+  # buyout is not matched to an unlevered listed comp (see docs §4.3).
   metrics:
     - revenue
     - ebitda
     - net_income
     - ebitda_margin
     - net_margin
+    - leverage
   # Size-like metrics span orders of magnitude -> log-scale before standardising.
   log_scaled_metrics:
     - revenue
     - ebitda
     - net_income
     - market_value
+    - net_debt
   standardize: zscore          # z-score each metric using the baseline universe
-  distance: euclidean          # standardised Euclidean distance
+  # Distance in standardised space. `mahalanobis` divides out the correlation
+  # between size metrics (revenue/EBITDA/net income move together) so size is not
+  # triple-counted; `euclidean` is the simpler orthogonal-axes fallback.
+  distance: mahalanobis        # mahalanobis | euclidean
+  mahalanobis_ridge: 0.15      # shrink covariance toward identity (robust/regularised)
+  # Per-metric weights (√w scaling of each axis). Margins should not carry the
+  # same weight as size in determining return behaviour; leverage sits between.
+  metric_weights:
+    revenue: 1.0
+    ebitda: 1.0
+    net_income: 0.7
+    ebitda_margin: 0.5
+    net_margin: 0.5
+    leverage: 0.8
   k_comparables: 8             # number of nearest traded assets in the basket
   min_comparables: 3           # minimum for a valid proxy
   weighting: inverse_distance  # inverse_distance | softmax
   softmax_temperature: 1.0
+  # Stability guards on the weighting (see docs §4.1):
+  #   * distance_floor stops a near-zero distance from taking ~100% of the basket
+  #     (inverse-distance degenerates without it).
+  #   * max_weight caps any single comparable so k>=3 names stay diversified.
+  distance_floor: 0.35         # standardised (RMS) units
+  max_weight: 0.35             # cap on a single comparable's basket weight
   filters:
     same_sector: false         # restrict comparables to the holding's sector
     same_region: false         # restrict comparables to the holding's region
@@ -34,8 +57,24 @@ construction:
 confidence:
   high_metric_count: 4         # >= this many metrics used -> eligible for "high"
   medium_metric_count: 2       # < this many metrics used -> "low"
-  near_distance: 1.5           # mean comparable distance <= this -> close fit
-  far_distance: 3.0            # mean comparable distance >= this -> poor fit
+  near_distance: 0.75          # mean comparable distance <= this -> close fit
+  far_distance: 1.75           # mean comparable distance >= this -> poor fit
+
+# Capital structure (Hamada) beta relevering — see docs §4.3.
+leverage:
+  marginal_tax_rate: 0.25      # tax shield term (1 - t) in the Hamada equation
+
+# Out-of-sample validation harness (see docs §6 and the Backtest tab). Returns
+# are ILLUSTRATIVE/SIMULATED in this prototype; in production the backtest runs
+# on the client's real return history.
+backtest:
+  periods: 60                  # monthly observations per series
+  seed: 20260821               # deterministic RNG seed (reproducible)
+  test_count: 20               # hold-out sample size (mid-cap by size)
+  market_drift: 0.006          # monthly market factor mean
+  market_vol: 0.045            # monthly market factor σ
+  sector_vol: 0.030            # monthly sector factor σ
+  idiosyncratic_vol: 0.045     # monthly single-name σ (drives residual tracking error)
 
 scatter:
   default_x: revenue
@@ -45,5 +84,7 @@ scatter:
     - ebitda
     - net_income
     - market_value
+    - net_debt
     - ebitda_margin
     - net_margin
+    - leverage

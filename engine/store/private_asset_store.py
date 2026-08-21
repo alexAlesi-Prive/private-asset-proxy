@@ -24,7 +24,7 @@ _LOCK = threading.Lock()
 # Numeric input fields coerced to float on the way in.
 _NUMERIC_FIELDS = {
     "revenue", "ebitda", "net_income", "market_cap", "last_nav", "leverage",
-    "expected_yield", "occupancy_rate", "vintage_year",
+    "net_debt", "expected_yield", "occupancy_rate", "vintage_year",
     "commitment", "paid_in", "capital_call_line",
 }
 # String input fields carried through.
@@ -211,6 +211,7 @@ def holding_from_record(record: dict[str, Any]) -> PrivateHolding:
         net_income=_num(inp.get("net_income")),
         last_nav=_num(inp.get("last_nav")),
         leverage=_num(inp.get("leverage")),
+        net_debt=_num(inp.get("net_debt")),
         expected_yield=_num(inp.get("expected_yield")),
         occupancy_rate=_num(inp.get("occupancy_rate")),
         property_type=inp.get("property_type"),
