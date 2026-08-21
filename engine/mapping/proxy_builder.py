@@ -14,7 +14,12 @@ from statistics import mean as _mean
 from typing import Any
 
 from engine.mapping.capital_calls import summarize_capital_calls
-from engine.mapping.metric_space import build_standardizer, distance, extract_metrics
+from engine.mapping.leverage import summarize_leverage
+from engine.mapping.metric_space import (
+    DistanceModel,
+    build_standardizer,
+    extract_metrics,
+)
 from engine.models.baseline_asset import BaselineAsset
 from engine.models.private_holding import PrivateHolding
 
@@ -49,7 +54,9 @@ class ProxyResult:
     coverage: float
     config_version: str
     generated_at: str
+    distance_metric: str = "mahalanobis"
     capital_call: dict[str, Any] | None = None
+    capital_structure: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -64,6 +71,7 @@ def construct_proxy(
     cfg = config.get("construction", {})
     metrics_cfg = list(cfg.get("metrics", []))
     log_scaled = cfg.get("log_scaled_metrics", [])
+    method = str(cfg.get("distance", "mahalanobis"))
     version = str(config.get("version", "unknown"))
     now = datetime.now(timezone.utc).isoformat()
 
@@ -78,6 +86,7 @@ def construct_proxy(
         holding_metrics=holding_metrics,
         config_version=version,
         generated_at=now,
+        distance_metric=method,
         capital_call=summarize_capital_calls(holding),
     )
 
@@ -121,16 +130,27 @@ def construct_proxy(
         )
 
     # --- standardise (fit on the full universe for stable stats) & score ---
+    # Mahalanobis divides out the correlation between size metrics; per-metric
+    # weights keep margins from carrying the same weight as size. Distances are
+    # RMS-normalised so they are comparable across holdings with different
+    # metric coverage (see metric_space).
     standardizer = build_standardizer(baseline, metrics_cfg, log_scaled)
+    model = DistanceModel(
+        standardizer=standardizer,
+        method=method,
+        weights={str(k): float(v) for k, v in (cfg.get("metric_weights") or {}).items()},
+        ridge=float(cfg.get("mahalanobis_ridge", 0.15)),
+    ).fit(baseline)
+
     h_std = standardizer.transform({m: holding_metrics[m] for m in metrics_used})
     scored = sorted(
-        ((distance(h_std, standardizer.transform(extract_metrics(a)), metrics_used), a)
+        ((model.distance(h_std, standardizer.transform(extract_metrics(a)), metrics_used), a)
          for a in eligible),
         key=lambda t: t[0],
     )
     chosen = scored[: min(int(cfg.get("k_comparables", 8)), len(scored))]
 
-    # --- weights (basket sums to 1) ---
+    # --- weights (basket sums to 1, with a distance floor + single-name cap) ---
     weights = _weights([d for d, _ in chosen], cfg)
     comparables = [
         Comparable(
@@ -160,22 +180,65 @@ def construct_proxy(
         conf_cfg=config.get("confidence", {}) or {},
     )
 
+    tax_rate = float((config.get("leverage", {}) or {}).get("marginal_tax_rate", 0.25))
+    capital_structure = summarize_leverage(holding, comparables, tax_rate)
+
     return ProxyResult(
         status="constructed", reason=None, filters_applied=applied,
         filters_relaxed=relaxed, comparables=comparables, proxy_point=proxy_point,
-        confidence=confidence, coverage=coverage, **common,
+        confidence=confidence, coverage=coverage,
+        capital_structure=capital_structure, **common,
     )
 
 
 def _weights(distances: list[float], cfg: dict[str, Any]) -> list[float]:
-    eps = 1e-6
+    """Distances → basket weights, with two stability guards.
+
+    * ``distance_floor`` — inverse-distance weighting degenerates when a
+      comparable sits at ~zero distance (it would take ~100% of the basket).
+      Flooring the distance keeps the basket diversified.
+    * ``max_weight`` — hard cap on any single comparable, water-filled onto the
+      rest, so k≥3 names actually share the basket.
+    """
+    eps = 1e-9
+    floor = float(cfg.get("distance_floor", 0.0) or 0.0)
+    d_adj = [max(d, floor) for d in distances]
     if cfg.get("weighting") == "softmax":
         temp = float(cfg.get("softmax_temperature", 1.0)) or 1.0
-        raw = [math.exp(-d / temp) for d in distances]
+        raw = [math.exp(-d / temp) for d in d_adj]
     else:  # inverse_distance (default)
-        raw = [1.0 / (d + eps) for d in distances]
+        raw = [1.0 / (d + eps) for d in d_adj]
     total = sum(raw) or 1.0
-    return [r / total for r in raw]
+    weights = [r / total for r in raw]
+
+    cap = float(cfg.get("max_weight", 1.0) or 1.0)
+    if 0.0 < cap < 1.0:
+        weights = _apply_cap(weights, cap)
+    return weights
+
+
+def _apply_cap(weights: list[float], cap: float) -> list[float]:
+    """Cap each weight at ``cap`` and redistribute the excess (water-filling)."""
+    n = len(weights)
+    if n == 0:
+        return weights
+    if cap * n <= 1.0:  # cap infeasible for this many names -> equal weights
+        return [1.0 / n] * n
+    w = list(weights)
+    for _ in range(n):
+        over = [i for i, x in enumerate(w) if x > cap + 1e-12]
+        if not over:
+            break
+        excess = sum(w[i] - cap for i in over)
+        for i in over:
+            w[i] = cap
+        under = [i for i in range(n) if i not in over]
+        pool = sum(w[i] for i in under)
+        if pool <= 0:
+            break
+        for i in under:
+            w[i] += excess * (w[i] / pool)
+    return w
 
 
 def _confidence(metric_count: int, mean_distance: float, relaxed: bool, conf_cfg: dict) -> str:

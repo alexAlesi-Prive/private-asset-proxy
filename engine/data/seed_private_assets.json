@@ -8,6 +8,7 @@
     "revenue": 18000,
     "ebitda": 5200,
     "net_income": 2600,
+    "net_debt": 9000,
     "last_nav": 24000,
     "strategy_type": "Growth"
   },
@@ -20,6 +21,7 @@
     "revenue": 42000,
     "ebitda": 15000,
     "net_income": 8000,
+    "net_debt": 55000,
     "last_nav": 61000,
     "strategy_type": "Buyout"
   },

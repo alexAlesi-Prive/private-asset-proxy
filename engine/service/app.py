@@ -5,6 +5,7 @@ Standard-library only. Endpoints:
   GET  /healthz                       liveness
   GET  /api/config                    metrics, mandatory fields, scatter axes, classes
   GET  /api/baseline                  traded comparable universe (with metrics)
+  GET  /api/backtest                  out-of-sample leave-one-out tracking error
   GET  /api/private-assets            saved private holdings (+ proxy summary)
   POST /api/private-assets            add a holding (saves) -> record + proxy
   GET  /api/private-assets/{id}       one holding + its proxy
@@ -27,6 +28,7 @@ from pathlib import Path
 from typing import Any
 
 from engine import __version__
+from engine.mapping.backtest import run_backtest
 from engine.mapping.config import load_mapping_config
 from engine.mapping.proxy_builder import construct_proxy
 from engine.mapping.universe import load_baseline_universe
@@ -53,6 +55,12 @@ def get_config() -> dict[str, Any]:
 @lru_cache(maxsize=1)
 def get_baseline() -> list[BaselineAsset]:
     return load_baseline_universe()
+
+
+@lru_cache(maxsize=1)
+def get_backtest() -> dict[str, Any]:
+    # Deterministic given config + universe, so cache the whole result.
+    return run_backtest(get_baseline(), get_config())
 
 
 def get_store() -> PrivateAssetStore:
@@ -91,8 +99,8 @@ def config_payload() -> dict[str, Any]:
             for ac in AssetClassType
         ],
         "metric_fields": [
-            "revenue", "ebitda", "net_income", "market_cap", "expected_yield",
-            "occupancy_rate",
+            "revenue", "ebitda", "net_income", "market_cap", "net_debt",
+            "leverage", "expected_yield", "occupancy_rate",
         ],
     }
 
@@ -155,6 +163,8 @@ class Handler(BaseHTTPRequestHandler):
             self._json(200, config_payload())
         elif route == "/api/baseline":
             self._json(200, baseline_payload())
+        elif route == "/api/backtest":
+            self._json(200, get_backtest())
         elif route == "/api/private-assets":
             self._list_private_assets()
         elif route.startswith("/api/private-assets/"):

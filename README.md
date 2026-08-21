@@ -1,8 +1,9 @@
 # Privé Proxy-Asset Engine
 
-Maps illiquid **private holdings** (private equity/debt/real-estate, funds, hedge
-funds) onto **liquid instruments and/or factor exposures** so they can flow
-through the same risk and portfolio analytics as listed positions.
+Maps illiquid **private holdings** (private equity/debt/real-estate and PE/PD/RE
+funds) onto **liquid traded comparables** so they can flow through the same risk
+and portfolio analytics as listed positions. (Hedge funds are out of scope —
+they need return-based style analysis, not fundamental comparables.)
 
 **Build goal (`PROXY_GOAL`): risk / analytics representation** — estimate how a
 private holding *behaves* (volatility, factor exposures, drawdown, contribution
@@ -40,8 +41,15 @@ weighted basket of the nearest **traded comparables**, fully explained.
 - **Phase 0 — methodology & provenance:** done (`docs/`).
 - **Phase 1 — EPC data contract, typed model, adapter:** done.
 - **Phase 2 — metric-comparables engine (config-driven, explainable, overridable):** done.
-- **Phase 4 — client UI (add/list/scatter/baseline tabs):** done.
-- **Phase 3 — validation harness (backtest/coverage report):** pending.
+  Distance is **Mahalanobis** (correlation-corrected), weighted, RMS-normalised, with a
+  distance floor + single-name cap; **leverage** is a matching metric with **Hamada** beta
+  relevering; vintage drives a **J-curve** deployment stage.
+- **Phase 3 — validation harness (out-of-sample leave-one-out backtest):** done
+  (`engine/mapping/backtest.py`, `GET /api/backtest`, Backtest tab).
+- **Phase 4 — client UI (assets / add / scatter / baseline / backtest / about tabs):** done.
+
+See [`docs/white-paper-methodology.md`](docs/white-paper-methodology.md) for the full
+methodology white paper (v1.1) and the changelog of what changed in response to review.
 
 > Note on EPC: no live EPC endpoint was reachable during this build, so the data
 > contract is derived from an available sample export and clearly labelled
@@ -64,9 +72,9 @@ cd frontend && npm install && npm run dev  # http://localhost:5173
 cd frontend && npm run build               # outputs frontend/dist
 ```
 
-API: `GET /api/config`, `GET /api/baseline`, `GET/POST /api/private-assets`,
-`POST /api/proxy/preview`, `GET /healthz`. Env: `PORT` (5530), `HOST`,
-`WEB_DIR` (built SPA dir), `PRIVATE_ASSETS_FILE`.
+API: `GET /api/config`, `GET /api/baseline`, `GET /api/backtest`,
+`GET/POST /api/private-assets`, `POST /api/proxy/preview`, `GET /healthz`. Env:
+`PORT` (5530), `HOST`, `WEB_DIR` (built SPA dir), `PRIVATE_ASSETS_FILE`.
 
 ## Deploy (Docker, built on the server)
 

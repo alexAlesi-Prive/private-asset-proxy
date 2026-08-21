@@ -10,14 +10,19 @@ function metricsFromInput(inp: Record<string, any>): MetricMap {
   const n = (v: any) => (v === null || v === undefined || v === '' ? null : Number(v))
   const rev = n(inp.revenue), eb = n(inp.ebitda), ni = n(inp.net_income)
   const mv = n(inp.market_cap) ?? n(inp.last_nav), ey = n(inp.expected_yield)
+  const nd = n(inp.net_debt), lev = n(inp.leverage)
   const m: MetricMap = {}
   if (rev != null && !Number.isNaN(rev)) m.revenue = rev
   if (eb != null && !Number.isNaN(eb)) m.ebitda = eb
   if (ni != null && !Number.isNaN(ni)) m.net_income = ni
   if (mv != null && !Number.isNaN(mv)) m.market_value = mv
   if (ey != null && !Number.isNaN(ey)) m.expected_yield = ey
+  if (nd != null && !Number.isNaN(nd)) m.net_debt = nd
   if (rev && eb != null) m.ebitda_margin = eb / rev
   if (rev && ni != null) m.net_margin = ni / rev
+  // Leverage (net debt / EBITDA): explicit multiple wins, else derive it.
+  if (lev != null && !Number.isNaN(lev)) m.leverage = lev
+  else if (nd != null && eb != null && eb > 0) m.leverage = nd / eb
   return m
 }
 

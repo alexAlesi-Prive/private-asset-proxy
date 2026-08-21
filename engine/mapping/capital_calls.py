@@ -14,9 +14,15 @@ for sizing, not for comparable selection:
 
 This module derives those figures from the holding's inputs. Pure function; no
 effect on which comparables are chosen (that stays driven by fundamentals).
+
+Vintage / J-curve. Vintage year is used *numerically*, not as a categorical
+label: a 2024-vintage fund at 20% called behaves nothing like a 2016 vintage at
+full deployment. The engine derives fund age and, combined with % called, a
+deployment (J-curve) stage — investing → deploying → maturing → harvesting.
 """
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Any
 
 from engine.models.private_holding import PrivateHolding
@@ -29,6 +35,54 @@ def _f(value: Any) -> float | None:
         return float(value)
     except (TypeError, ValueError):
         return None
+
+
+def _deployment(
+    vintage_year: int | None, pct_called: float | None, as_of_year: int
+) -> dict[str, Any] | None:
+    """Fund age + % called → a J-curve deployment stage (numeric, not categorical).
+
+    The stage blends *time* (age since vintage) and *deployment* (% of commitment
+    called), so a young-but-fully-called fund and an old-but-barely-called fund
+    are placed correctly rather than by vintage label alone.
+    """
+    if vintage_year is None and pct_called is None:
+        return None
+    age = as_of_year - int(vintage_year) if vintage_year is not None else None
+
+    stage = None
+    # Deployment dominates when known; age is the fallback / tie-breaker.
+    if pct_called is not None:
+        if pct_called < 0.30:
+            stage = "investing"       # early J-curve: capital going in, fees drag
+        elif pct_called < 0.70:
+            stage = "deploying"       # ramping exposure
+        elif pct_called < 0.95:
+            stage = "maturing"        # largely deployed, value being built
+        else:
+            stage = "harvesting"      # fully called, distributions expected
+    elif age is not None:
+        if age <= 2:
+            stage = "investing"
+        elif age <= 4:
+            stage = "deploying"
+        elif age <= 6:
+            stage = "maturing"
+        else:
+            stage = "harvesting"
+
+    return {
+        "vintage_year": int(vintage_year) if vintage_year is not None else None,
+        "as_of_year": as_of_year,
+        "fund_age_years": age,
+        "pct_called": round(pct_called, 6) if pct_called is not None else None,
+        "j_curve_stage": stage,
+        "note": (
+            "Deployment (J-curve) stage from fund age and % called — a young, "
+            "lightly-called fund carries little market exposure yet; a fully-called "
+            "mature fund behaves like its underlying holdings."
+        ),
+    }
 
 
 def summarize_capital_calls(holding: PrivateHolding) -> dict[str, Any] | None:
@@ -52,8 +106,9 @@ def summarize_capital_calls(holding: PrivateHolding) -> dict[str, Any] | None:
     if paid_in is None and schedule_total > 0:
         paid_in = schedule_total
 
-    # If the section was never used, don't attach anything.
-    if commitment is None and paid_in is None and line is None and not calls:
+    # If nothing fund-specific was supplied, don't attach anything.
+    if (commitment is None and paid_in is None and line is None and not calls
+            and holding.vintage_year is None):
         return None
 
     uncalled = pct_called = None
@@ -79,6 +134,9 @@ def summarize_capital_calls(holding: PrivateHolding) -> dict[str, Any] | None:
     if uncalled is not None:
         net_uncovered = round(max(uncalled - (line or 0.0), 0.0), 6)
 
+    as_of_year = datetime.now(timezone.utc).year
+    deployment = _deployment(holding.vintage_year, pct_called, as_of_year)
+
     return {
         "commitment": commitment,
         "paid_in": paid_in,
@@ -88,6 +146,7 @@ def summarize_capital_calls(holding: PrivateHolding) -> dict[str, Any] | None:
         "net_uncovered_commitment": net_uncovered,
         "effective_exposure": effective_exposure,
         "exposure_basis": exposure_basis,
+        "deployment": deployment,
         "calls": calls,
         "note": (
             "Market exposure is sized to invested capital "

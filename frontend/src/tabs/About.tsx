@@ -20,7 +20,6 @@ const ASSET_CLASSES = [
   'Private Equity Fund',
   'Private Debt Fund',
   'Real Estate Fund',
-  'Hedge Fund',
 ]
 
 const STEPS: { title: string; body: string }[] = [
@@ -61,7 +60,15 @@ const WINS: { title: string; body: string }[] = [
   },
   {
     title: 'Fund-aware',
-    body: 'Sizes market exposure to invested capital; reports uncalled commitment separately as a liquidity obligation.',
+    body: 'Sizes market exposure to invested capital; reports uncalled commitment as a liquidity obligation and reads vintage as a J-curve deployment stage, not a label.',
+  },
+  {
+    title: 'Leverage-aware',
+    body: 'Matches on capital structure and Hamada-relevers the proxy’s equity beta, so a 5× buyout is not read like an unlevered listed comp.',
+  },
+  {
+    title: 'Validated out of sample',
+    body: 'A leave-one-out backtest reports realised tracking error, correlation and beta — the fundamental match is measured against returns, not just asserted.',
   },
   {
     title: 'One risk engine',
@@ -81,6 +88,14 @@ const FAQ: { q: string; a: string }[] = [
   {
     q: 'Why not a named factor model?',
     a: 'Transparency. There’s no proprietary factor table to defend — the factors are the client’s metrics, visible on a scatter.',
+  },
+  {
+    q: 'Isn’t fundamental similarity different from returns moving together?',
+    a: 'Yes — and we don’t conflate them. Fundamentally-similar assets tend to share systematic risk, but that’s an empirical claim. The backtest tab measures realised tracking error and correlation out of sample rather than asserting the link.',
+  },
+  {
+    q: 'How do you validate it?',
+    a: 'A leave-one-out backtest: hold out traded names, treat each as private, proxy it from the rest, and measure realised tracking error, correlation and beta. Tracking error is dominated by single-name idiosyncratic risk, which no proxy captures — the systematic part is what we claim, and what we measure.',
   },
   {
     q: 'Can the client disagree with a proxy?',
@@ -122,9 +137,10 @@ export function About() {
           <p className="text-[15px] leading-relaxed text-ink">
             Privé lets illiquid private holdings run through the <span className="font-semibold">same risk and
             portfolio analytics as listed positions</span>. We build each holding a{' '}
-            <span className="font-semibold text-primary">proxy-asset</span> — a basket of liquid, traded assets that
-            behaves the way the holding behaves — so a private position flows through VaR, stress tests, tracking error
-            and factor attribution exactly like a public one.
+            <span className="font-semibold text-primary">proxy-asset</span> — a basket of liquid, traded assets chosen to
+            capture the holding’s <span className="font-semibold">systematic market behaviour</span> — so a private
+            position flows through VaR, stress tests, tracking error and factor attribution exactly like a public one.
+            How well it tracks is <span className="font-semibold">measured</span>, out of sample, not assumed.
           </p>
           <p className="mt-4 border-l-2 border-secondary pl-3 text-sm italic text-secondary">
             “Give every private asset a liquid stand-in, and the whole portfolio — public and private — runs through one
@@ -170,7 +186,10 @@ export function About() {
           </div>
           <p className="mt-3 text-xs text-tertiary">
             Under the hood it’s a deterministic, config-versioned pipeline: metrics are log-scaled and z-scored, then
-            the nearest comparables are chosen by standardised distance and inverse-distance weighted.
+            the nearest comparables are chosen by <span className="font-medium">Mahalanobis</span> distance (which divides
+            out the correlation between size metrics), inverse-distance weighted with a distance floor and a single-name
+            cap so the basket stays diversified. Capital structure is one of the metrics, and the basket’s equity beta is
+            Hamada-relevered to the holding’s leverage.
           </p>
         </Section>
 
@@ -229,7 +248,9 @@ export function About() {
                 ))}
               </div>
               <p className="mt-2.5 text-xs text-tertiary">
-                Unrecognised classes route to manual mapping — never guessed.
+                Unrecognised classes route to manual mapping — never guessed. Hedge funds are deliberately excluded:
+                strategy type and vintage can’t place a market-neutral fund in a revenue/EBITDA space — the right tool
+                there is return-based style analysis.
               </p>
             </Card>
             <Card>

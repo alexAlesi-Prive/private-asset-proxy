@@ -1,5 +1,6 @@
 import { metricLabel, type BaselineAsset, type Config, type Proxy } from '../api'
 import { CapitalCallCard } from './CapitalCallCard'
+import { CapitalStructureCard } from './CapitalStructureCard'
 import { ConfidenceChip } from './Chip'
 import { ScatterPanel } from './ScatterPanel'
 import type { ScatterSeries } from './Scatter'
@@ -18,7 +19,7 @@ export function ProxyView({ proxy, baseline, config }: {
     )
   }
 
-  const hasCapitalCall = !!proxy.capital_call
+  const hasSidebar = !!proxy.capital_call || !!proxy.capital_structure
 
   const comparableIds = new Set(proxy.comparables.map((c) => c.asset_id))
   const weightById = new Map(proxy.comparables.map((c) => [c.asset_id, c.weight]))
@@ -60,7 +61,7 @@ export function ProxyView({ proxy, baseline, config }: {
         {proxy.filters_relaxed && <span className="text-danger">filters relaxed</span>}
       </div>
 
-      <div className={hasCapitalCall ? 'grid lg:grid-cols-2 gap-6 items-start' : ''}>
+      <div className={hasSidebar ? 'grid lg:grid-cols-2 gap-6 items-start' : ''}>
         {/* left: scatter + basket */}
         <div>
           <ScatterPanel
@@ -101,10 +102,11 @@ export function ProxyView({ proxy, baseline, config }: {
           </div>
         </div>
 
-        {/* right: capital call, next to the scatter */}
-        {hasCapitalCall && (
-          <div className="mt-6 lg:mt-0">
-            <CapitalCallCard cc={proxy.capital_call!} />
+        {/* right: capital structure + capital call, next to the scatter */}
+        {hasSidebar && (
+          <div className="mt-6 lg:mt-0 space-y-4">
+            {proxy.capital_structure && <CapitalStructureCard cs={proxy.capital_structure} />}
+            {proxy.capital_call && <CapitalCallCard cc={proxy.capital_call} />}
           </div>
         )}
       </div>

@@ -31,6 +31,15 @@ export interface CapitalCallEntry {
   pct_of_commitment?: number | null
 }
 
+export interface Deployment {
+  vintage_year?: number | null
+  as_of_year?: number
+  fund_age_years?: number | null
+  pct_called?: number | null
+  j_curve_stage?: 'investing' | 'deploying' | 'maturing' | 'harvesting' | string | null
+  note: string
+}
+
 export interface CapitalCall {
   commitment?: number | null
   paid_in?: number | null
@@ -40,7 +49,20 @@ export interface CapitalCall {
   net_uncovered_commitment?: number | null
   effective_exposure?: number | null
   exposure_basis?: 'nav' | 'paid_in' | null
+  deployment?: Deployment | null
   calls: CapitalCallEntry[]
+  note: string
+}
+
+export interface CapitalStructure {
+  marginal_tax_rate: number
+  holding_net_debt?: number | null
+  holding_equity?: number | null
+  holding_debt_to_equity?: number | null
+  holding_leverage?: number | null
+  basket_debt_to_equity?: number | null
+  basket_leverage?: number | null
+  relever_factor?: number | null
   note: string
 }
 
@@ -60,7 +82,43 @@ export interface Proxy {
   coverage: number
   config_version: string
   generated_at: string
+  distance_metric?: string
   capital_call?: CapitalCall | null
+  capital_structure?: CapitalStructure | null
+}
+
+export interface BacktestResult {
+  asset_id: string
+  name: string
+  ticker?: string
+  sector?: string
+  n_comparables: number
+  confidence?: string | null
+  tracking_error: number
+  correlation: number
+  r2: number
+  beta: number
+  vol_actual: number
+  vol_proxy: number
+}
+
+export interface BacktestAggregate {
+  median_tracking_error: number
+  mean_tracking_error: number
+  median_correlation: number
+  mean_correlation: number
+  median_r2: number
+  mean_beta: number
+}
+
+export interface Backtest {
+  config_version: string
+  periods: number
+  n_tested: number
+  returns_basis: string
+  aggregate: BacktestAggregate
+  results: BacktestResult[]
+  note: string
 }
 
 export interface PrivateRecord {
@@ -103,6 +161,7 @@ const jsonPost = (url: string, body: unknown, method = 'POST') =>
 export const api = {
   config: () => fetch('/api/config').then(j<Config>),
   baseline: () => fetch('/api/baseline').then(j<{ count: number; assets: BaselineAsset[] }>),
+  backtest: () => fetch('/api/backtest').then(j<Backtest>),
   list: () => fetch('/api/private-assets').then(j<{ count: number; assets: PrivateRecord[] }>),
   get: (id: string) =>
     fetch(`/api/private-assets/${id}`).then(j<{ record: PrivateRecord; proxy: Proxy }>),
@@ -121,12 +180,14 @@ export const METRIC_LABELS: Record<string, string> = {
   ebitda: 'EBITDA',
   net_income: 'Net income',
   market_value: 'Market value / NAV',
+  net_debt: 'Net debt',
+  leverage: 'Leverage (ND/EBITDA)',
   ebitda_margin: 'EBITDA margin',
   net_margin: 'Net margin',
   expected_yield: 'Expected yield',
 }
 
-export const LOG_METRICS = new Set(['revenue', 'ebitda', 'net_income', 'market_value'])
+export const LOG_METRICS = new Set(['revenue', 'ebitda', 'net_income', 'market_value', 'net_debt'])
 
 export function metricLabel(m: string): string {
   return METRIC_LABELS[m] ?? m
@@ -137,6 +198,7 @@ export function formatMetric(metric: string, v: number | undefined | null): stri
   if (v === undefined || v === null || Number.isNaN(v)) return '—'
   if (metric.includes('margin') || metric === 'expected_yield' || metric === 'occupancy_rate')
     return `${(v * 100).toFixed(1)}%`
+  if (metric === 'leverage') return `${v.toFixed(1)}x`
   const a = Math.abs(v)
   if (a >= 1e6) return `${(v / 1e6).toFixed(2)}T`
   if (a >= 1e3) return `${(v / 1e3).toFixed(1)}B`

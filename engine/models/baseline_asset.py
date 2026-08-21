@@ -25,11 +25,13 @@ class BaselineAsset:
     currency: str | None = None
 
     # Fundamentals (financials expressed in a common currency, USD millions, so
-    # size metrics are comparable across listings). Margins are derived.
+    # size metrics are comparable across listings). Margins and the leverage
+    # multiple (net debt / EBITDA) are derived in the metric space.
     revenue: float | None = None
     ebitda: float | None = None
     net_income: float | None = None
     market_cap: float | None = None
+    net_debt: float | None = None      # net debt (USD millions); drives leverage & Hamada relevering
 
     raw: dict[str, Any] = field(default_factory=dict)
 
@@ -37,7 +39,7 @@ class BaselineAsset:
     def from_dict(cls, d: dict[str, Any]) -> "BaselineAsset":
         known = {
             "id", "name", "ticker", "isin", "asset_class", "sector", "region",
-            "currency", "revenue", "ebitda", "net_income", "market_cap",
+            "currency", "revenue", "ebitda", "net_income", "market_cap", "net_debt",
         }
         return cls(
             id=str(d.get("id") or d.get("ticker") or d.get("name")),
@@ -52,6 +54,7 @@ class BaselineAsset:
             ebitda=_num(d.get("ebitda")),
             net_income=_num(d.get("net_income")),
             market_cap=_num(d.get("market_cap")),
+            net_debt=_num(d.get("net_debt")),
             raw={k: v for k, v in d.items() if k not in known},
         )
 
