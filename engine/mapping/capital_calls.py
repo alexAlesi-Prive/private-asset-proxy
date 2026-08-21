@@ -5,7 +5,7 @@ fraction is *paid in* (called) at any time; the rest is *uncalled* and subject
 to future capital calls. For a **risk/analytics representation** this matters
 for sizing, not for comparable selection:
 
-  * Market exposure is carried by the **invested capital** — the marked NAV
+  * Market exposure is carried by the **invested capital** - the marked NAV
     (or paid-in if NAV is absent). That is the notional the proxy basket
     represents.
   * **Uncalled commitment** is NOT market exposure; it is a contingent
@@ -18,7 +18,7 @@ effect on which comparables are chosen (that stays driven by fundamentals).
 Vintage / J-curve. Vintage year is used *numerically*, not as a categorical
 label: a 2024-vintage fund at 20% called behaves nothing like a 2016 vintage at
 full deployment. The engine derives fund age and, combined with % called, a
-deployment (J-curve) stage — investing → deploying → maturing → harvesting.
+deployment (J-curve) stage - investing → deploying → maturing → harvesting.
 """
 from __future__ import annotations
 
@@ -78,7 +78,7 @@ def _deployment(
         "pct_called": round(pct_called, 6) if pct_called is not None else None,
         "j_curve_stage": stage,
         "note": (
-            "Deployment (J-curve) stage from fund age and % called — a young, "
+            "Deployment (J-curve) stage from fund age and % called - a young, "
             "lightly-called fund carries little market exposure yet; a fully-called "
             "mature fund behaves like its underlying holdings."
         ),

@@ -269,13 +269,13 @@ class Handler(BaseHTTPRequestHandler):
 
 _STATUS_PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Privé — Proxy-Asset Engine</title>
+<title>Privé - Proxy-Asset Engine</title>
 <style>body{{margin:0;font-family:system-ui,sans-serif;background:#F7F8FA;color:#0F2433}}
 header{{background:#fff;border-bottom:1px solid #E2E8F0;padding:20px 32px}}
 h1{{margin:0;font-size:20px;color:#0E3C5C}} main{{padding:32px;max-width:760px;margin:0 auto}}
 code{{background:#fff;border:1px solid #E2E8F0;padding:2px 6px;border-radius:4px;color:#1F6FA8}}
 .badge{{background:#16A34A;color:#fff;border-radius:999px;padding:3px 12px;font-size:12px}}</style>
-</head><body><header><h1>Privé — Proxy-Asset Engine</h1></header>
+</head><body><header><h1>Privé - Proxy-Asset Engine</h1></header>
 <main><p><span class="badge">● API healthy</span> · v{version}</p>
 <p>The frontend build was not found, so this is the API status page.
 Baseline universe: <strong>{base}</strong> traded comparables.</p>

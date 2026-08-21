@@ -42,9 +42,9 @@ export function CapitalCallCard({ cc }: { cc: CapitalCall }) {
           </div>
           <JCurve stage={cc.deployment.j_curve_stage} />
           <div className="grid grid-cols-3 gap-x-4 gap-y-1 text-sm mt-2">
-            <Stat label="Vintage" value={cc.deployment.vintage_year != null ? String(cc.deployment.vintage_year) : '—'} />
-            <Stat label="Fund age" value={cc.deployment.fund_age_years != null ? `${cc.deployment.fund_age_years}y` : '—'} />
-            <Stat label="% called" value={cc.deployment.pct_called != null ? `${(cc.deployment.pct_called * 100).toFixed(0)}%` : '—'} />
+            <Stat label="Vintage" value={cc.deployment.vintage_year != null ? String(cc.deployment.vintage_year) : '-'} />
+            <Stat label="Fund age" value={cc.deployment.fund_age_years != null ? `${cc.deployment.fund_age_years}y` : '-'} />
+            <Stat label="% called" value={cc.deployment.pct_called != null ? `${(cc.deployment.pct_called * 100).toFixed(0)}%` : '-'} />
           </div>
         </div>
       )}
@@ -63,12 +63,12 @@ export function CapitalCallCard({ cc }: { cc: CapitalCall }) {
             <tbody>
               {cc.calls.map((c, i) => (
                 <tr key={i} className="border-b border-border last:border-0">
-                  <td className="py-1 pr-2 tnum">{c.date ?? '—'}</td>
+                  <td className="py-1 pr-2 tnum">{c.date ?? '-'}</td>
                   <td className="py-1 pr-2 text-right tnum">{fmt(c.amount)}</td>
                   <td className="py-1 pr-2 text-right tnum">
-                    {c.pct_of_commitment != null ? `${(c.pct_of_commitment * 100).toFixed(1)}%` : '—'}
+                    {c.pct_of_commitment != null ? `${(c.pct_of_commitment * 100).toFixed(1)}%` : '-'}
                   </td>
-                  <td className="py-1 text-tertiary">{c.purpose ?? '—'}</td>
+                  <td className="py-1 text-tertiary">{c.purpose ?? '-'}</td>
                 </tr>
               ))}
             </tbody>
@@ -98,7 +98,7 @@ function JCurve({ stage }: { stage?: string | null }) {
 }
 
 function fmt(v: number | null | undefined): string {
-  return v == null ? '—' : formatMetric('market_value', v)
+  return v == null ? '-' : formatMetric('market_value', v)
 }
 
 function Stat({ label, value, hint, strong }: { label: string; value: string; hint?: string; strong?: boolean }) {

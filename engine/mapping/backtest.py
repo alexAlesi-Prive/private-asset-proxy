@@ -7,18 +7,18 @@ leave-one-out backtest:
   1. Take a hold-out sample of traded assets and **treat each as if it were a
      private holding** (its fundamentals only).
   2. Build a proxy for it from the **rest** of the universe (the held-out asset
-     is excluded — a genuine out-of-sample test).
+     is excluded - a genuine out-of-sample test).
   3. Compare the proxy basket's realised return series to the asset's own,
      out of sample: **tracking error**, correlation, R² and beta.
   4. Aggregate across the sample.
 
-Return series in this prototype are **illustrative / simulated** — a transparent
+Return series in this prototype are **illustrative / simulated** - a transparent
 factor model (market + sector + single-name idiosyncratic), so the harness and
 its statistics can be demonstrated end to end. In production the same backtest
 runs on the client's **real** return history; nothing about the method changes,
 only the data source. The construction is deliberately such that the systematic
 (market/sector) part is capturable by comparables while the single-name
-idiosyncratic part is not — which is exactly what the methodology claims a proxy
+idiosyncratic part is not - which is exactly what the methodology claims a proxy
 does and does not represent.
 
 Pure functions; deterministic given the config seed; standard library only.
@@ -40,14 +40,14 @@ _ANNUALISE = math.sqrt(12.0)  # monthly → annual for vol / tracking error
 
 
 def _seed(base: int, token: str) -> int:
-    """Stable per-token seed (crc32 — deterministic across processes)."""
+    """Stable per-token seed (crc32 - deterministic across processes)."""
     return (base ^ zlib.crc32(token.encode("utf-8"))) & 0xFFFFFFFF
 
 
 def _betas(baseline: list[BaselineAsset]) -> dict[str, float]:
     """Assign each asset a market beta from size / margin / leverage.
 
-    Smaller, lower-margin, more-levered names get a higher market beta — a
+    Smaller, lower-margin, more-levered names get a higher market beta - a
     plausible cross-section. Uses the same standardiser as the engine so the
     factor structure is related to (not identical to) the matching metrics.
     """
@@ -79,7 +79,7 @@ def generate_returns(baseline: list[BaselineAsset], cfg: dict[str, Any]) -> dict
     market_rng = Random(_seed(seed, "market"))
     market = [market_rng.gauss(drift, mkt_vol) for _ in range(periods)]
 
-    sectors = sorted({a.sector or "—" for a in baseline})
+    sectors = sorted({a.sector or "-" for a in baseline})
     sector_series: dict[str, list[float]] = {}
     for sector in sectors:
         rng = Random(_seed(seed, f"sector::{sector}"))
@@ -90,7 +90,7 @@ def generate_returns(baseline: list[BaselineAsset], cfg: dict[str, Any]) -> dict
     for a in baseline:
         rng = Random(_seed(seed, f"asset::{a.id}"))
         b = betas[a.id]
-        sec = sector_series[a.sector or "—"]
+        sec = sector_series[a.sector or "-"]
         returns[a.id] = [
             b * market[t] + sec[t] + rng.gauss(0.0, idio_vol)
             for t in range(periods)
@@ -135,7 +135,7 @@ def _holding_from_asset(a: BaselineAsset) -> PrivateHolding:
 
 
 def _select_test_set(baseline: list[BaselineAsset], count: int) -> list[BaselineAsset]:
-    """Central slice by size — a representative mid-cap hold-out sample."""
+    """Central slice by size - a representative mid-cap hold-out sample."""
     ranked = sorted((a for a in baseline if a.market_cap), key=lambda a: a.market_cap or 0.0)
     count = min(count, len(ranked))
     start = max(0, (len(ranked) - count) // 2)
@@ -198,7 +198,7 @@ def run_backtest(
             "(a market + sector + idiosyncratic factor model) so the harness can be "
             "demonstrated; in production it runs on the client's real return history. "
             "Tracking error is dominated by single-name idiosyncratic risk, which a "
-            "proxy cannot capture — the proxy represents systematic/market behaviour, "
+            "proxy cannot capture - the proxy represents systematic/market behaviour, "
             "which the correlation and beta columns measure."
         ),
     }

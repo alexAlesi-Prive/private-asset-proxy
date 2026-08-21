@@ -2,15 +2,15 @@
 
 Maps illiquid **private holdings** (private equity/debt/real-estate and PE/PD/RE
 funds) onto **liquid traded comparables** so they can flow through the same risk
-and portfolio analytics as listed positions. (Hedge funds are out of scope —
+and portfolio analytics as listed positions. (Hedge funds are out of scope -
 they need return-based style analysis, not fundamental comparables.)
 
-**Build goal (`PROXY_GOAL`): risk / analytics representation** — estimate how a
+**Build goal (`PROXY_GOAL`): risk / analytics representation** - estimate how a
 private holding *behaves* (volatility, factor exposures, drawdown, contribution
 to portfolio risk), **not** what it is *worth*. This build never produces a
 valuation or fair-value mark. See [`docs/proxy-methodology.md`](docs/proxy-methodology.md).
 
-The methodology is designed to be **explainable, auditable, and overridable** —
+The methodology is designed to be **explainable, auditable, and overridable** -
 every proxy is a reviewable proposal with a recorded rationale, not a black box.
 
 ## Architecture
@@ -33,20 +33,20 @@ Dockerfile, docker-compose.yml, deploy.sh            Deployment (build on the se
 The engine depends only on PyYAML; the proxy math is stdlib. It has **no
 dependency on `resource-temp/`** (reference-only, excluded from the image).
 
-**Method in one line:** no fixed factor library — a private holding is placed in
+**Method in one line:** no fixed factor library - a private holding is placed in
 a shared metric space (revenue, EBITDA, net income, margins…) and its proxy is a
 weighted basket of the nearest **traded comparables**, fully explained.
 
 ### Build status
-- **Phase 0 — methodology & provenance:** done (`docs/`).
-- **Phase 1 — EPC data contract, typed model, adapter:** done.
-- **Phase 2 — metric-comparables engine (config-driven, explainable, overridable):** done.
+- **Phase 0 - methodology & provenance:** done (`docs/`).
+- **Phase 1 - EPC data contract, typed model, adapter:** done.
+- **Phase 2 - metric-comparables engine (config-driven, explainable, overridable):** done.
   Distance is **Mahalanobis** (correlation-corrected), weighted, RMS-normalised, with a
   distance floor + single-name cap; **leverage** is a matching metric with **Hamada** beta
   relevering; vintage drives a **J-curve** deployment stage.
-- **Phase 3 — validation harness (out-of-sample leave-one-out backtest):** done
+- **Phase 3 - validation harness (out-of-sample leave-one-out backtest):** done
   (`engine/mapping/backtest.py`, `GET /api/backtest`, Backtest tab).
-- **Phase 4 — client UI (assets / add / scatter / baseline / backtest / about tabs):** done.
+- **Phase 4 - client UI (assets / add / scatter / baseline / backtest / about tabs):** done.
 
 See [`docs/white-paper-methodology.md`](docs/white-paper-methodology.md) for the full
 methodology white paper (v1.1) and the changelog of what changed in response to review.
@@ -79,7 +79,7 @@ API: `GET /api/config`, `GET /api/baseline`, `GET /api/backtest`,
 ## Deploy (Docker, built on the server)
 
 The image is **built on the server from source** and tagged by the current git
-commit — nothing is pulled from a container registry. `deploy.sh` wraps the
+commit - nothing is pulled from a container registry. `deploy.sh` wraps the
 whole cycle:
 
 ```bash
@@ -94,7 +94,7 @@ IMAGE_TAG=$(git rev-parse --short HEAD) docker compose up -d --build
 docker compose ps        # expect: running (healthy)
 ```
 
-Then open **http://localhost:5530** — the container serves the full UI and the
+Then open **http://localhost:5530** - the container serves the full UI and the
 API on the same port. Health check: `curl http://localhost:5530/healthz`.
 
 User-added holdings persist on the `psi-private-asset-proxy-data` volume

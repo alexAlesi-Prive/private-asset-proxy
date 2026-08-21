@@ -53,7 +53,7 @@ export function PortfolioScatter({ config, baseline }: { config: Config; baselin
   return (
     <div>
       <div className="mb-4">
-        <h2 className="text-lg font-semibold text-primary">Private assets — metric map</h2>
+        <h2 className="text-lg font-semibold text-primary">Private assets - metric map</h2>
         <p className="text-sm text-tertiary">
           Your private holdings ({holdings.length}) plotted against the traded universe. Switch the axes to compare on
           different metrics.
@@ -61,7 +61,7 @@ export function PortfolioScatter({ config, baseline }: { config: Config; baselin
       </div>
 
       {holdings.length === 0 ? (
-        <p className="text-sm text-tertiary py-10 text-center">No private assets yet — add one to see it here.</p>
+        <p className="text-sm text-tertiary py-10 text-center">No private assets yet - add one to see it here.</p>
       ) : (
         <div className="rounded-lg border border-border bg-white p-5">
           <ScatterPanel

@@ -1,4 +1,4 @@
-// Confidence / status chips. Never colour-only — always carry the text label.
+// Confidence / status chips. Never colour-only - always carry the text label.
 const CONFIDENCE: Record<string, string> = {
   high: 'bg-success/10 text-success border-success/30',
   medium: 'bg-secondary/10 text-secondary border-secondary/30',
@@ -20,7 +20,7 @@ export function StatusChip({ status }: { status?: string }) {
   const cls = ok
     ? 'bg-success/10 text-success border-success/30'
     : 'bg-danger/10 text-danger border-danger/30'
-  const label = status === 'constructed' ? 'Proxy built' : status === 'insufficient_data' ? 'Needs a metric' : status === 'no_comparables' ? 'No comparables' : status ?? '—'
+  const label = status === 'constructed' ? 'Proxy built' : status === 'insufficient_data' ? 'Needs a metric' : status === 'no_comparables' ? 'No comparables' : status ?? '-'
   return (
     <span className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-medium ${cls}`}>
       {label}

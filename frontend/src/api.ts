@@ -195,7 +195,7 @@ export function metricLabel(m: string): string {
 
 /** Values for size metrics are in USD millions; margins/yields are decimals. */
 export function formatMetric(metric: string, v: number | undefined | null): string {
-  if (v === undefined || v === null || Number.isNaN(v)) return '—'
+  if (v === undefined || v === null || Number.isNaN(v)) return '-'
   if (metric.includes('margin') || metric === 'expected_yield' || metric === 'occupancy_rate')
     return `${(v * 100).toFixed(1)}%`
   if (metric === 'leverage') return `${v.toFixed(1)}x`
